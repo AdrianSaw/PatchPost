@@ -154,6 +154,8 @@ This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/) as
 
 ### First production deploy (manual)
 
+0. **One-time:** register a `workers.dev` subdomain in the [Cloudflare Workers onboarding](https://dash.cloudflare.com/?to=/:account/workers/onboarding) dashboard (required before the first public URL).
+
 1. Log in: `npx wrangler login`
 2. Set runtime secrets on the Worker (production Supabase **cloud** URL and **anon** key — not `127.0.0.1`):
 
