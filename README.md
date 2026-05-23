@@ -187,7 +187,7 @@ Repository secrets required:
 | `SUPABASE_URL` | Build-time `astro:env` (same as production) |
 | `SUPABASE_KEY` | Build-time `astro:env` (anon key) |
 | `CLOUDFLARE_API_TOKEN` | Wrangler deploy (template: Edit Cloudflare Workers) |
-| `CLOUDFLARE_ACCOUNT_ID` | Wrangler account binding |
+| `CLOUDFLARE_ACCOUNT_ID` | Wrangler account binding (see `account_id` in `wrangler.jsonc`) |
 
 Worker runtime secrets (`SUPABASE_*`) are set once via `wrangler secret put`; CI does not need to rotate them on each deploy.
 
