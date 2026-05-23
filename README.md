@@ -150,25 +150,48 @@ Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_
 
 ## Deployment
 
-This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).
+This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/) as the Worker `patchpost` (see `wrangler.jsonc`). Operational details, risks, and rollback: [`context/foundation/infrastructure.md`](context/foundation/infrastructure.md).
 
-1. Build the project:
+### First production deploy (manual)
 
-```bash
-npm run build
-```
-
-2. Deploy with Wrangler:
+1. Log in: `npx wrangler login`
+2. Set runtime secrets on the Worker (production Supabase **cloud** URL and **anon** key — not `127.0.0.1`):
 
 ```bash
-npx wrangler deploy
+npx wrangler secret put SUPABASE_URL
+npx wrangler secret put SUPABASE_KEY
 ```
 
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
+3. Build and deploy:
+
+```bash
+npm run deploy
+```
+
+4. In **Supabase** → Authentication → URL Configuration, set **Site URL** and **Redirect URLs** to your `https://patchpost.<account>.workers.dev` origin (plus `http://127.0.0.1:4321` if you still develop locally).
+
+5. Smoke test: `/`, `/dashboard` (redirect when logged out), sign-up → sign-in → dashboard.
+
+Logs: `npx wrangler tail`. Rollback: `npx wrangler deployments list` then `npx wrangler rollback <version-id>`.
+
+### GitHub Actions auto-deploy
+
+On every push to `master`, [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs build + `wrangler deploy`.
+
+Repository secrets required:
+
+| Secret | Purpose |
+|--------|---------|
+| `SUPABASE_URL` | Build-time `astro:env` (same as production) |
+| `SUPABASE_KEY` | Build-time `astro:env` (anon key) |
+| `CLOUDFLARE_API_TOKEN` | Wrangler deploy (template: Edit Cloudflare Workers) |
+| `CLOUDFLARE_ACCOUNT_ID` | Wrangler account binding |
+
+Worker runtime secrets (`SUPABASE_*`) are set once via `wrangler secret put`; CI does not need to rotate them on each deploy.
 
 ## CI
 
-GitHub Actions runs lint + build on every push and PR to `master`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
+GitHub Actions runs lint + build on every push and PR to `master` ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets for the build step.
 
 ## License
 

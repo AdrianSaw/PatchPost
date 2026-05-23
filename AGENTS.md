@@ -36,7 +36,7 @@ PatchPost turns game-repo changes into player-facing copy (changelogs, social dr
 - `npm run build` / `npm run preview` — production build and preview
 - `npm run lint` / `lint:fix` / `format` — @eslint.config.js + Prettier
 - `npx supabase start` — local Supabase (Docker); wire keys per **Secrets & env** above
-- `npx wrangler deploy` — after build (Cloudflare account + Wrangler auth)
+- `npm run deploy` — build + `wrangler deploy` (Cloudflare account + Wrangler auth); production auto-deploy on push to `master` via `.github/workflows/deploy.yml`
 
 Node **22.14+** (@.nvmrc). Husky + lint-staged: ESLint on `*.{ts,tsx,astro}`, Prettier on `*.{json,css,md}` (@package.json).
 
