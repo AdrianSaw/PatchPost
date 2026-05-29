@@ -2,13 +2,17 @@ import { defineMiddleware } from "astro:middleware";
 import { createClient } from "@/lib/supabase";
 
 /** Exact paths reachable without a session. Add new public pages here explicitly. */
-const PUBLIC_EXACT = ["/"];
+const PUBLIC_EXACT = ["/", "/favicon.ico"];
 
 /** Path prefixes reachable without a session (auth entry + signin/signout API). */
 const PUBLIC_PREFIXES = ["/auth/signin", "/api/auth/signin", "/api/auth/signout"];
 
 /** Asset paths that must not trigger auth redirects. */
-const STATIC_PREFIXES = ["/_astro/"];
+const STATIC_PREFIXES = ["/_astro/", "/sitemap"];
+
+function matchesPrefix(pathname: string, prefix: string): boolean {
+  return pathname === prefix || pathname.startsWith(`${prefix}/`);
+}
 
 function isPublicPath(pathname: string): boolean {
   if (PUBLIC_EXACT.includes(pathname)) {
@@ -17,7 +21,7 @@ function isPublicPath(pathname: string): boolean {
   if (STATIC_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
     return true;
   }
-  return PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  return PUBLIC_PREFIXES.some((prefix) => matchesPrefix(pathname, prefix));
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -32,8 +36,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (supabase) {
     const {
       data: { user },
+      error,
     } = await supabase.auth.getUser();
-    context.locals.user = user ?? null;
+    context.locals.user = error ? null : (user ?? null);
   } else {
     context.locals.user = null;
   }
