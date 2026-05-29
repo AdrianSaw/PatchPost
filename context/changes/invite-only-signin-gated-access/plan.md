@@ -353,10 +353,10 @@ Allowlist parse can run once per signin request (small Set from env string). No 
 
 #### Automated
 
-- [x] 4.1 Lint passes: `npm run lint`
-- [x] 4.2 Production build passes: `npm run build`
+- [x] 4.1 Lint passes: `npm run lint` — 407dd01
+- [x] 4.2 Production build passes: `npm run build` — 407dd01
 
 #### Manual
 
-- [x] 4.3 README runbook supports adding one allowlisted user end-to-end
-- [x] 4.4 Owner knows hosted Supabase signup disable step
+- [x] 4.3 README runbook supports adding one allowlisted user end-to-end — 407dd01
+- [x] 4.4 Owner knows hosted Supabase signup disable step — 407dd01
