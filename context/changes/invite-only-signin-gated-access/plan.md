@@ -328,26 +328,26 @@ Allowlist parse can run once per signin request (small Set from env string). No 
 
 #### Automated
 
-- [x] 2.1 Lint passes: `npm run lint`
-- [x] 2.2 Production build passes: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint` — 629f468
+- [x] 2.2 Production build passes: `npm run build` — 629f468
 
 #### Manual
 
-- [x] 2.3 No signup links on home, topbar, or signin page
+- [x] 2.3 No signup links on home, topbar, or signin page — 629f468
 
 ### Phase 3: Catch-all middleware and Supabase config
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Production build passes: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 3.3 Logged out `/` works; `/dashboard` redirects to signin
-- [ ] 3.4 `/auth/signup` redirects to signin
-- [ ] 3.5 Allowlisted session reaches `/dashboard`
-- [ ] 3.6 Removed signup API returns 404
+- [x] 3.3 Logged out `/` works; `/dashboard` redirects to signin
+- [x] 3.4 `/auth/signup` redirects to signin
+- [x] 3.5 Allowlisted session reaches `/dashboard`
+- [x] 3.6 Removed signup API returns 404
 
 ### Phase 4: Documentation and operational runbook
 
