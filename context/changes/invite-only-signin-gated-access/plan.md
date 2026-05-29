@@ -316,24 +316,24 @@ Allowlist parse can run once per signin request (small Set from env string). No 
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint`
-- [x] 1.2 Production build passes: `npm run build`
+- [x] 1.1 Lint passes: `npm run lint` — f7b2e95
+- [x] 1.2 Production build passes: `npm run build` — f7b2e95
 
 #### Manual
 
-- [x] 1.3 Supabase-provisioned user can sign in
-- [x] 1.4 Email with no Supabase account cannot sign in (invalid credentials)
+- [x] 1.3 Supabase-provisioned user can sign in — f7b2e95
+- [x] 1.4 Email with no Supabase account cannot sign in (invalid credentials) — f7b2e95
 
 ### Phase 2: Remove public signup surface
 
 #### Automated
 
-- [ ] 2.1 Lint passes: `npm run lint`
-- [ ] 2.2 Production build passes: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint`
+- [x] 2.2 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 No signup links on home, topbar, or signin page
+- [x] 2.3 No signup links on home, topbar, or signin page
 
 ### Phase 3: Catch-all middleware and Supabase config
 
