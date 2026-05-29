@@ -339,24 +339,24 @@ Allowlist parse can run once per signin request (small Set from env string). No 
 
 #### Automated
 
-- [x] 3.1 Lint passes: `npm run lint`
-- [x] 3.2 Production build passes: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint` — 4f8b625
+- [x] 3.2 Production build passes: `npm run build` — 4f8b625
 
 #### Manual
 
-- [x] 3.3 Logged out `/` works; `/dashboard` redirects to signin
-- [x] 3.4 `/auth/signup` redirects to signin
-- [x] 3.5 Allowlisted session reaches `/dashboard`
-- [x] 3.6 Removed signup API returns 404
+- [x] 3.3 Logged out `/` works; `/dashboard` redirects to signin — 4f8b625
+- [x] 3.4 `/auth/signup` redirects to signin — 4f8b625
+- [x] 3.5 Allowlisted session reaches `/dashboard` — 4f8b625
+- [x] 3.6 Removed signup API returns 404 — 4f8b625
 
 ### Phase 4: Documentation and operational runbook
 
 #### Automated
 
-- [ ] 4.1 Lint passes: `npm run lint`
-- [ ] 4.2 Production build passes: `npm run build`
+- [x] 4.1 Lint passes: `npm run lint`
+- [x] 4.2 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 4.3 README runbook supports adding one allowlisted user end-to-end
-- [ ] 4.4 Owner knows hosted Supabase signup disable step
+- [x] 4.3 README runbook supports adding one allowlisted user end-to-end
+- [x] 4.4 Owner knows hosted Supabase signup disable step
