@@ -37,7 +37,7 @@ Dostęp do aplikacji jest invite-only: logowanie tak, publiczna rejestracja nie;
 | S-01 | invite-only-signin-gated-access | user on allowlist can sign in and reach gated workspace; non-allowlisted emails are rejected; public registration is unavailable | — | FR-001, Access Control | done |
 | S-02 | projects-crud-core | user can create and manage own projects | S-01, F-02 | FR-002 | done |
 | S-03 | manual-to-generated-history-flow | user can add manual changes, generate content, and save result in history | S-02, F-01, F-02 | US-01, FR-003, FR-004, FR-005 | done |
-| S-04 | draft-history-editing | user can open saved drafts and edit them in history | S-03 | FR-006 | proposed |
+| S-04 | draft-history-editing | user can open saved drafts and edit them in history | S-03 | FR-006 | done |
 
 ## Streams
 
@@ -150,7 +150,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Nice-to-have poza MVP; zbyt wczesne priorytetyzowanie opóźni north star przy blokerze time.
-- **Status:** proposed
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -181,3 +181,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-02: user can create and manage own projects.** — Archived 2026-05-30 → `context/archive/2026-05-30-projects-crud-core/`. Lesson: —.
 - **F-01: (foundation) backend/API ma spójny kontrakt obsługi manualnego wejścia, klasyfikacji i generacji treści.** — Archived 2026-05-30 → `context/archive/2026-05-30-generation-workflow-api-backbone/`. Lesson: —.
 - **S-03: user can add manual changes, generate content, and save result in history.** — Archived 2026-05-30 → `context/archive/2026-05-30-manual-to-generated-history-flow/`. Lesson: —.
+- **S-04: user can open saved drafts and edit them in history.** — Archived 2026-05-30 → `context/archive/2026-05-30-draft-history-editing/`. Lesson: —.
