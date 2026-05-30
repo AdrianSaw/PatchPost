@@ -297,12 +297,12 @@ None — uses existing tables and RLS.
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint` — b790729
-- [x] 1.2 Production build passes: `npm run build` — b790729
+- [x] 1.1 Lint passes: `npm run lint` — d6ca7cf
+- [x] 1.2 Production build passes: `npm run build` — d6ca7cf
 
 #### Manual
 
-- [x] 1.3 Project detail shows Generate and Drafts navigation links — b790729
+- [x] 1.3 Project detail shows Generate and Drafts navigation links — d6ca7cf
 
 ### Phase 2: Generate page and client workflow
 
