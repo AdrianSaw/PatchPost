@@ -19,6 +19,10 @@ export const prerender = false;
  * Remove or gate before production if kept long-term.
  */
 export const GET: APIRoute = async (context) => {
+  if (!import.meta.env.DEV) {
+    return new Response(null, { status: 404 });
+  }
+
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {
     return new Response(JSON.stringify({ ok: false, error: "Supabase is not configured" }), {

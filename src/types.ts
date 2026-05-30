@@ -24,7 +24,7 @@ export interface Project {
   name: string;
   description: string | null;
   repo_url: string | null;
-  default_tone: string | null;
+  default_tone: DefaultTone | null;
   created_at: string;
   updated_at: string;
 }
@@ -32,7 +32,7 @@ export interface Project {
 export interface ChangeInput {
   id: string;
   project_id: string;
-  source_type: string;
+  source_type: SourceType;
   title: string | null;
   raw_content: string;
   created_by: string;
@@ -44,9 +44,9 @@ export interface GenerationRun {
   project_id: string;
   change_input_id: string | null;
   created_by: string;
-  output_type: string | null;
-  tone: string | null;
-  status: string | null;
+  output_type: OutputType | null;
+  tone: DefaultTone | null;
+  status: GenerationRunStatus | null;
   prompt_snapshot: string | null;
   created_at: string;
 }
@@ -58,7 +58,7 @@ export interface GeneratedOutput {
   title: string | null;
   content: string;
   edited_content: string | null;
-  status: string | null;
+  status: GenerationRunStatus | null;
   created_at: string;
   updated_at: string;
 }
@@ -66,7 +66,10 @@ export interface GeneratedOutput {
 export const createProjectSchema = z.object({
   name: z.string().trim().min(1),
   description: z.string().trim().optional().nullable(),
-  repo_url: z.url().optional().nullable(),
+  repo_url: z.preprocess(
+    (val) => (typeof val === "string" && val.trim() === "" ? null : val),
+    z.url().optional().nullable(),
+  ),
   default_tone: defaultToneSchema.optional().nullable(),
 });
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;

@@ -13,6 +13,35 @@ function validationError(error: z.ZodError): PostgrestError {
   };
 }
 
+function relationMismatchError(field: string): PostgrestError {
+  return {
+    name: "ValidationError",
+    message: `${field} does not belong to project`,
+    details: "",
+    hint: "",
+    code: "validation_error",
+  };
+}
+
+async function assertGenerationRunBelongsToProject(
+  supabase: SupabaseClient,
+  generationRunId: string,
+  projectId: string,
+): Promise<PostgrestError | null> {
+  const { data, error } = await supabase
+    .from("generation_runs")
+    .select("project_id")
+    .eq("id", generationRunId)
+    .maybeSingle();
+  if (error) {
+    return error;
+  }
+  if (data?.project_id !== projectId) {
+    return relationMismatchError("generation_run_id");
+  }
+  return null;
+}
+
 export async function listGeneratedOutputsByProject(supabase: SupabaseClient, projectId: string) {
   return supabase
     .from("generated_outputs")
@@ -32,6 +61,17 @@ export async function createGeneratedOutput(
   const parsed = createGeneratedOutputSchema.safeParse(input);
   if (!parsed.success) {
     return { data: null, error: validationError(parsed.error) };
+  }
+
+  if (parsed.data.generation_run_id) {
+    const fkError = await assertGenerationRunBelongsToProject(
+      supabase,
+      parsed.data.generation_run_id,
+      parsed.data.project_id,
+    );
+    if (fkError) {
+      return { data: null, error: fkError };
+    }
   }
 
   return supabase
@@ -56,6 +96,28 @@ export async function updateGeneratedOutput(
   const parsed = updateGeneratedOutputSchema.safeParse(input);
   if (!parsed.success) {
     return { data: null, error: validationError(parsed.error) };
+  }
+
+  if (parsed.data.generation_run_id) {
+    const { data: output, error: outputError } = await supabase
+      .from("generated_outputs")
+      .select("project_id")
+      .eq("id", generatedOutputId)
+      .maybeSingle();
+    if (outputError) {
+      return { data: null, error: outputError };
+    }
+    if (!output) {
+      return { data: null, error: relationMismatchError("generated_output_id") };
+    }
+    const fkError = await assertGenerationRunBelongsToProject(
+      supabase,
+      parsed.data.generation_run_id,
+      output.project_id as string,
+    );
+    if (fkError) {
+      return { data: null, error: fkError };
+    }
   }
 
   const payload = {
