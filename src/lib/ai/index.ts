@@ -13,6 +13,7 @@ export type {
 export { getGenerationProvider } from "@/lib/ai/factory";
 export { createGeminiProvider, DEFAULT_GEMINI_MODEL } from "@/lib/ai/gemini-provider";
 export { mockProvider } from "@/lib/ai/mock-provider";
+export { detectOutputLanguage } from "@/lib/ai/output-language";
 export { buildClassifyPrompt, buildGeneratePrompt } from "@/lib/ai/prompts";
 export type { PromptParts } from "@/lib/ai/prompts";
 export {

@@ -26,7 +26,7 @@ export async function loadProjectDetailPage(
     return { kind: "redirect", to: "/app/projects" };
   }
 
-  const project = response.data as Project | null;
+  const project = response.data;
   if (!project) {
     return { kind: "redirect", to: "/app/projects" };
   }

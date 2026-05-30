@@ -386,19 +386,19 @@ No migrations. Requires F-02 schema applied. CI continues using mock provider wi
 
 #### Automated
 
-- [ ] 2.1 Lint passes: `npm run lint`
-- [ ] 2.2 Production build passes: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint`
+- [x] 2.2 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 Workflow completes classify → generate → persist via MockProvider (via smoke or curl)
+- [x] 2.3 Workflow completes classify → generate → persist via MockProvider (via smoke or curl)
 
 ### Phase 3: JSON HTTP API routes
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Production build passes: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Production build passes: `npm run build`
 
 #### Manual
 
@@ -409,8 +409,8 @@ No migrations. Requires F-02 schema applied. CI continues using mock provider wi
 
 #### Automated
 
-- [ ] 4.1 Lint passes: `npm run lint`
-- [ ] 4.2 Production build passes: `npm run build`
+- [x] 4.1 Lint passes: `npm run lint`
+- [x] 4.2 Production build passes: `npm run build`
 
 #### Manual
 
