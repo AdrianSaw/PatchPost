@@ -1,6 +1,7 @@
 ---
 import AppLayout from "@/layouts/AppLayout.astro";
 import ClassificationPanel from "@/components/generation/ClassificationPanel";
+import DraftEditForm from "@/components/generation/DraftEditForm";
 import { formatOutputType, formatTone } from "@/lib/generation/labels";
 import { draftBody, draftDisplayTitle } from "@/lib/projects/draft-text";
 import { loadDraftDetailPage } from "@/lib/projects/draft-detail-page";
@@ -44,7 +45,13 @@ const body = draftBody(draft);
     }
 
     <div class="rounded-lg border border-white/10 bg-black/20 p-4">
-      <pre class="font-sans text-sm leading-relaxed whitespace-pre-wrap text-blue-50/95">{body}</pre>
+      <DraftEditForm
+        projectId={project.id}
+        draftId={draft.id}
+        initialBody={body}
+        showRevert={draft.edited_content != null}
+        client:load
+      />
     </div>
   </div>
 </AppLayout>

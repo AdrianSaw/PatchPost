@@ -251,13 +251,13 @@ None — uses existing `edited_content` column and RLS update policy.
 
 #### Automated
 
-- [ ] 2.1 Lint passes: `npm run lint`
-- [ ] 2.2 Production build passes: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint`
+- [x] 2.2 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 Draft detail supports save, cancel, revert, and empty-body validation
-- [ ] 2.4 Save redirects to drafts list with success query
+- [x] 2.3 Draft detail supports save, cancel, revert, and empty-body validation
+- [x] 2.4 Save redirects to drafts list with success query
 
 ### Phase 3: Drafts list badge and saved success banner
 

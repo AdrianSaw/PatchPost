@@ -1,23 +1,36 @@
 import type { ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface SubmitButtonProps {
   pendingText: string;
   icon: ReactNode;
   children: ReactNode;
   pending?: boolean;
+  disabled?: boolean;
+  className?: string;
 }
 
-export function SubmitButton({ pendingText, icon, children, pending: pendingOverride }: SubmitButtonProps) {
+export function SubmitButton({
+  pendingText,
+  icon,
+  children,
+  pending: pendingOverride,
+  disabled = false,
+  className,
+}: SubmitButtonProps) {
   const { pending: formPending } = useFormStatus();
   const pending = pendingOverride ?? formPending;
 
   return (
     <Button
       type="submit"
-      disabled={pending}
-      className="w-full rounded-lg bg-purple-600 px-4 py-2 font-medium text-white transition-colors hover:bg-purple-500"
+      disabled={pending || disabled}
+      className={cn(
+        "w-full rounded-lg bg-purple-600 px-4 py-2 font-medium text-white transition-colors hover:bg-purple-500",
+        className,
+      )}
     >
       {pending ? (
         <span className="flex items-center gap-2">
