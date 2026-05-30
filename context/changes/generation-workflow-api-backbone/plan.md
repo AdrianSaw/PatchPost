@@ -397,13 +397,13 @@ No migrations. Requires F-02 schema applied. CI continues using mock provider wi
 
 #### Automated
 
-- [x] 3.1 Lint passes: `npm run lint`
-- [x] 3.2 Production build passes: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint` — 4206860
+- [x] 3.2 Production build passes: `npm run build` — 4206860
 
 #### Manual
 
 - [ ] 3.3 POST change-inputs + generation-runs succeed authenticated
-- [x] 3.4 Unauthenticated and wrong UUID cases return expected errors
+- [x] 3.4 Unauthenticated and wrong UUID cases return expected errors — 4206860
 
 ### Phase 4: Dev smoke route and verification
 
@@ -414,5 +414,5 @@ No migrations. Requires F-02 schema applied. CI continues using mock provider wi
 
 #### Manual
 
-- [ ] 4.3 GET `/api/dev/f01-generation-smoke` returns ok when signed in
+- [x] 4.3 GET `/api/dev/f01-generation-smoke` returns ok when signed in
 - [ ] 4.4 Optional Gemini live smoke with Polish input
