@@ -2,6 +2,7 @@
 change_id: generation-workflow-api-backbone
 title: Generation workflow API backbone
 status: implemented
+created: 2026-05-30
 updated: 2026-05-30
 archived_at: null
 ---
