@@ -32,7 +32,7 @@ Dostęp do aplikacji jest invite-only: logowanie tak, publiczna rejestracja nie;
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-01 | generation-workflow-api-backbone | (foundation) backend/API ma spójny przepływ dla wejścia zmian, klasyfikacji i generacji | — | FR-003, FR-004, Business Logic | ready |
-| F-02 | project-and-draft-data-foundation | (foundation) warstwa danych wspiera projekty, źródła zmian i trwały zapis draftów | — | FR-002, FR-005 | implementing |
+| F-02 | project-and-draft-data-foundation | (foundation) warstwa danych wspiera projekty, źródła zmian i trwały zapis draftów | — | FR-002, FR-005 | done |
 | F-03 | local-supabase-dev-scripts | (foundation) dev ma jawne komendy local vs cloud Supabase (Docker vs hosted) | — | — | proposed |
 | S-01 | invite-only-signin-gated-access | user on allowlist can sign in and reach gated workspace; non-allowlisted emails are rejected; public registration is unavailable | — | FR-001, Access Control | done |
 | S-02 | projects-crud-core | user can create and manage own projects | S-01, F-02 | FR-002 | proposed |
@@ -56,7 +56,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 - **Frontend:** present — Astro 6 + React 19 + Tailwind 4; routing plikowy w `src/pages/`; strony auth w `src/pages/auth/`.
 - **Backend / API:** partial — SSR i endpointy auth (`src/pages/api/auth/`); brak API domenowego (projekty, generacja, drafty).
-- **Data:** partial — klient Supabase + migracja `projects` (F-02 p1); pełny schemat domenowy w toku.
+- **Data:** present — pełny schemat F-02 (projects, change_inputs, generation_runs, generated_outputs) + RLS; serwisy w `src/lib/services/`.
 - **Auth:** present — invite-only via Supabase Auth dashboard; middleware catch-all (S-01 done).
 - **Deploy / infra:** present — Cloudflare SSR (`astro.config.mjs`, `wrangler.jsonc`); CI/deploy w `.github/workflows/`.
 - **Observability:** partial — `observability.enabled` w Wrangler; brak aplikacyjnego logowania/monitoringu w `src/`.
@@ -87,7 +87,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Bez trwałego zapisu projektów i draftów north star nie potwierdzi wartości end-to-end.
-- **Status:** implementing
+- **Status:** done
 
 ### F-03: Local Supabase dev scripts
 
@@ -157,10 +157,10 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
 |---|---|---|---|---|
 | F-01 | generation-workflow-api-backbone | Define generation workflow API contract | yes | Równolegle z S-01/F-02; wymagane przed S-03 |
-| F-02 | project-and-draft-data-foundation | Establish project and draft data lifecycle | yes | W toku (p1 done); przed S-02/S-03 |
+| F-02 | project-and-draft-data-foundation | Establish project and draft data lifecycle | yes | Done — archived |
 | F-03 | local-supabase-dev-scripts | Add npm scripts and env profiles for local vs cloud Supabase | yes | Po F-02 p1; równolegle z resztą F-02; `/10x-plan local-supabase-dev-scripts` |
 | S-01 | invite-only-signin-gated-access | Enforce invite-only signin and remove public signup | yes | Done — archived |
-| S-02 | projects-crud-core | Deliver core project CRUD for owner | no | Czeka na S-01 i F-02 |
+| S-02 | projects-crud-core | Deliver core project CRUD for owner | yes | S-01 i F-02 done; `/10x-plan projects-crud-core` |
 | S-03 | manual-to-generated-history-flow | Deliver manual-to-generated end-to-end flow | no | North star; czeka na S-02, F-01, F-02 |
 | S-04 | draft-history-editing | Add draft history editing experience | no | Nice-to-have po S-03 |
 
@@ -177,3 +177,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 ## Done
 
 - **S-01: user on allowlist can sign in and reach gated workspace; non-allowlisted emails are rejected; public registration is unavailable.** — Archived 2026-05-30 → `context/archive/2026-05-27-invite-only-signin-gated-access/`. Lesson: —.
+- **F-02: (foundation) warstwa danych wspiera cykl życia projektu, wejścia zmian i trwały zapis draftów.** — Archived 2026-05-30 → `context/archive/2026-05-30-project-and-draft-data-foundation/`. Lesson: —.
