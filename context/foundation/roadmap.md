@@ -35,7 +35,7 @@ Dostęp do aplikacji jest invite-only: logowanie tak, publiczna rejestracja nie;
 | F-02 | project-and-draft-data-foundation | (foundation) warstwa danych wspiera projekty, źródła zmian i trwały zapis draftów | — | FR-002, FR-005 | done |
 | F-03 | local-supabase-dev-scripts | (foundation) dev ma jawne komendy local vs cloud Supabase (Docker vs hosted) | — | — | proposed |
 | S-01 | invite-only-signin-gated-access | user on allowlist can sign in and reach gated workspace; non-allowlisted emails are rejected; public registration is unavailable | — | FR-001, Access Control | done |
-| S-02 | projects-crud-core | user can create and manage own projects | S-01, F-02 | FR-002 | proposed |
+| S-02 | projects-crud-core | user can create and manage own projects | S-01, F-02 | FR-002 | done |
 | S-03 | manual-to-generated-history-flow | user can add manual changes, generate content, and save result in history | S-02, F-01, F-02 | US-01, FR-003, FR-004, FR-005 | proposed |
 | S-04 | draft-history-editing | user can open saved drafts and edit them in history | S-03 | FR-006 | proposed |
 
@@ -126,7 +126,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Bez spójnego CRUD projektu nie ma kontekstu do manual input ani historii generacji.
-- **Status:** proposed
+- **Status:** done
 
 ### S-03: Manual to generated history flow
 
@@ -178,3 +178,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 - **S-01: user on allowlist can sign in and reach gated workspace; non-allowlisted emails are rejected; public registration is unavailable.** — Archived 2026-05-30 → `context/archive/2026-05-27-invite-only-signin-gated-access/`. Lesson: —.
 - **F-02: (foundation) warstwa danych wspiera cykl życia projektu, wejścia zmian i trwały zapis draftów.** — Archived 2026-05-30 → `context/archive/2026-05-30-project-and-draft-data-foundation/`. Lesson: —.
+- **S-02: user can create and manage own projects.** — Archived 2026-05-30 → `context/archive/2026-05-30-projects-crud-core/`. Lesson: —.
