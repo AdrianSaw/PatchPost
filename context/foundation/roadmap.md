@@ -31,7 +31,7 @@ Dostęp do aplikacji jest invite-only: logowanie tak, publiczna rejestracja nie;
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| F-01 | generation-workflow-api-backbone | (foundation) backend/API ma spójny przepływ dla wejścia zmian, klasyfikacji i generacji | — | FR-003, FR-004, Business Logic | ready |
+| F-01 | generation-workflow-api-backbone | (foundation) backend/API ma spójny przepływ dla wejścia zmian, klasyfikacji i generacji | — | FR-003, FR-004, Business Logic | done |
 | F-02 | project-and-draft-data-foundation | (foundation) warstwa danych wspiera projekty, źródła zmian i trwały zapis draftów | — | FR-002, FR-005 | done |
 | F-03 | local-supabase-dev-scripts | (foundation) dev ma jawne komendy local vs cloud Supabase (Docker vs hosted) | — | — | proposed |
 | S-01 | invite-only-signin-gated-access | user on allowlist can sign in and reach gated workspace; non-allowlisted emails are rejected; public registration is unavailable | — | FR-001, Access Control | done |
@@ -74,7 +74,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Bez tego fundamentu przepływ generacji będzie składany ad hoc i opóźni north star mimo celu speed.
-- **Status:** ready
+- **Status:** done
 
 ### F-02: Project and draft data foundation
 
@@ -179,3 +179,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **S-01: user on allowlist can sign in and reach gated workspace; non-allowlisted emails are rejected; public registration is unavailable.** — Archived 2026-05-30 → `context/archive/2026-05-27-invite-only-signin-gated-access/`. Lesson: —.
 - **F-02: (foundation) warstwa danych wspiera cykl życia projektu, wejścia zmian i trwały zapis draftów.** — Archived 2026-05-30 → `context/archive/2026-05-30-project-and-draft-data-foundation/`. Lesson: —.
 - **S-02: user can create and manage own projects.** — Archived 2026-05-30 → `context/archive/2026-05-30-projects-crud-core/`. Lesson: —.
+- **F-01: (foundation) backend/API ma spójny kontrakt obsługi manualnego wejścia, klasyfikacji i generacji treści.** — Archived 2026-05-30 → `context/archive/2026-05-30-generation-workflow-api-backbone/`. Lesson: —.
