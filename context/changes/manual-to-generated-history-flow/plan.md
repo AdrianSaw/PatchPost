@@ -308,13 +308,13 @@ None — uses existing tables and RLS.
 
 #### Automated
 
-- [x] 2.1 Lint passes: `npm run lint`
-- [x] 2.2 Production build passes: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint` — 77067c7
+- [x] 2.2 Production build passes: `npm run build` — 77067c7
 
 #### Manual
 
-- [x] 2.3 Generate form submits manual input and redirects to drafts list on success (mock or live provider)
-- [x] 2.4 Generation API failure shows error on generate page without redirect
+- [x] 2.3 Generate form submits manual input and redirects to drafts list on success (mock or live provider) — 77067c7
+- [x] 2.4 Generation API failure shows error on generate page without redirect — 77067c7
 
 ### Phase 3: Draft history list and read-only detail
 
