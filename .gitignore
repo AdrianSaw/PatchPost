@@ -34,5 +34,8 @@ pnpm-debug.log*
 .cursor/rules/
 .cursor/.10x-cli-manifest.json
 
+# Codex CLI local config
+.codex/
+
 # MCP config (may contain API keys)
 .mcp.json
