@@ -1,10 +1,10 @@
 ---
 change_id: invite-only-signin-gated-access
 title: Invite-only signin and gated access
-status: impl_reviewed
+status: archived
 created: 2026-05-27
-updated: 2026-05-27
-archived_at: null
+updated: 2026-05-30
+archived_at: 2026-05-30T10:17:23Z
 ---
 
 ## Notes
