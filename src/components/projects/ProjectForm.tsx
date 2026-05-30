@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FolderGit2, Link2, Plus } from "lucide-react";
+import { FolderGit2, Link2, Plus, Save } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { ServerError } from "@/components/auth/ServerError";
 import { SubmitButton } from "@/components/auth/SubmitButton";
@@ -44,6 +44,7 @@ export default function ProjectForm({
   pendingText = "Saving...",
   hiddenFields,
 }: ProjectFormProps) {
+  const isUpdate = hiddenFields?._action === "update";
   const [name, setName] = useState(defaultValues?.name ?? "");
   const [description, setDescription] = useState(defaultValues?.description ?? "");
   const [repoUrl, setRepoUrl] = useState(defaultValues?.repo_url ?? "");
@@ -139,7 +140,10 @@ export default function ProjectForm({
 
       <ServerError message={errorMessage} />
 
-      <SubmitButton pendingText={pendingText} icon={<Plus className="size-4" />}>
+      <SubmitButton
+        pendingText={pendingText}
+        icon={isUpdate ? <Save className="size-4" /> : <Plus className="size-4" />}
+      >
         {submitLabel}
       </SubmitButton>
     </form>
