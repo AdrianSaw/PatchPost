@@ -286,8 +286,8 @@ No migrations in S-02. Requires F-02 migrations already applied on target Supaba
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint`
-- [x] 1.2 Production build passes: `npm run build`
+- [x] 1.1 Lint passes: `npm run lint` — 3c8c460
+- [x] 1.2 Production build passes: `npm run build` — 3c8c460
 
 #### Manual
 
