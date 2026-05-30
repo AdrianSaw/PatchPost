@@ -1,9 +1,9 @@
 ---
 change_id: project-and-draft-data-foundation
 title: Project and draft data foundation
-status: implementing
+status: implemented
 created: 2026-05-30
-updated: 2026-05-30
+updated: 2026-05-27
 archived_at: null
 ---
 
