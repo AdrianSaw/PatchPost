@@ -50,7 +50,10 @@ export async function listGenerationRunsByProject(supabase: SupabaseClient, proj
     .order("created_at", { ascending: false });
 }
 
-export async function getGenerationRunById(supabase: SupabaseClient, generationRunId: string) {
+export async function getGenerationRunById(
+  supabase: SupabaseClient,
+  generationRunId: string,
+): Promise<{ data: GenerationRun | null; error: PostgrestError | null }> {
   return supabase.from("generation_runs").select("*").eq("id", generationRunId).maybeSingle();
 }
 

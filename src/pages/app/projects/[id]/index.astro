@@ -26,6 +26,20 @@ const apiAction = `/api/projects/${project.id}`;
       <p class="mt-1 text-sm text-blue-100/50">
         Created {formatProjectDate(project.created_at)} · Updated {formatProjectDate(project.updated_at)}
       </p>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <a
+          href={`/app/projects/${project.id}/generate`}
+          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
+        >
+          Generate
+        </a>
+        <a
+          href={`/app/projects/${project.id}/drafts`}
+          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
+        >
+          Drafts
+        </a>
+      </div>
     </div>
 
     <ProjectForm

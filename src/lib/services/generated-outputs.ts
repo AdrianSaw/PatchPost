@@ -1,7 +1,33 @@
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 import type { z } from "zod";
-import type { CreateGeneratedOutputInput, GeneratedOutput, UpdateGeneratedOutputInput } from "@/types";
+import type {
+  CreateGeneratedOutputInput,
+  DefaultTone,
+  GeneratedOutput,
+  OutputType,
+  UpdateGeneratedOutputInput,
+} from "@/types";
 import { createGeneratedOutputSchema, updateGeneratedOutputSchema } from "@/types";
+
+export interface ProjectDraftHistoryItem {
+  draft: GeneratedOutputListRow;
+  output_type: OutputType | null;
+  tone: DefaultTone | null;
+}
+
+export type GeneratedOutputListRow = Pick<
+  GeneratedOutput,
+  "id" | "project_id" | "generation_run_id" | "title" | "content" | "edited_content" | "created_at"
+>;
+
+const PROJECT_DRAFT_HISTORY_LIMIT = 50;
+
+const DRAFT_HISTORY_LIST_COLUMNS =
+  "id, project_id, generation_run_id, title, content, edited_content, created_at" as const;
+
+interface DraftHistoryQueryRow extends GeneratedOutputListRow {
+  generation_runs: { output_type: OutputType | null; tone: DefaultTone | null } | null;
+}
 
 function validationError(error: z.ZodError): PostgrestError {
   return {
@@ -50,7 +76,42 @@ export async function listGeneratedOutputsByProject(supabase: SupabaseClient, pr
     .order("created_at", { ascending: false });
 }
 
-export async function getGeneratedOutputById(supabase: SupabaseClient, generatedOutputId: string) {
+export async function listProjectDraftHistory(
+  supabase: SupabaseClient,
+  projectId: string,
+): Promise<{ data: ProjectDraftHistoryItem[] | null; error: PostgrestError | null; truncated: boolean }> {
+  const { data, error } = await supabase
+    .from("generated_outputs")
+    .select(`${DRAFT_HISTORY_LIST_COLUMNS}, generation_runs ( output_type, tone )`)
+    .eq("project_id", projectId)
+    .order("created_at", { ascending: false })
+    .limit(PROJECT_DRAFT_HISTORY_LIMIT);
+
+  if (error) {
+    return { data: null, error, truncated: false };
+  }
+
+  const items = (data as DraftHistoryQueryRow[] | null)?.map((row) => {
+    const { generation_runs: run, ...draft } = row;
+    return {
+      draft,
+      output_type: run?.output_type ?? null,
+      tone: run?.tone ?? null,
+    } satisfies ProjectDraftHistoryItem;
+  });
+
+  const rows = items ?? [];
+  return {
+    data: rows,
+    error: null,
+    truncated: rows.length === PROJECT_DRAFT_HISTORY_LIMIT,
+  };
+}
+
+export async function getGeneratedOutputById(
+  supabase: SupabaseClient,
+  generatedOutputId: string,
+): Promise<{ data: GeneratedOutput | null; error: PostgrestError | null }> {
   return supabase.from("generated_outputs").select("*").eq("id", generatedOutputId).maybeSingle();
 }
 
