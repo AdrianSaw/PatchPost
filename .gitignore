@@ -33,3 +33,6 @@ pnpm-debug.log*
 .cursor/prompts/
 .cursor/rules/
 .cursor/.10x-cli-manifest.json
+
+# MCP config (may contain API keys)
+.mcp.json
