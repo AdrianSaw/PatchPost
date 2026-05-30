@@ -21,7 +21,10 @@ export async function listChangeInputsByProject(supabase: SupabaseClient, projec
     .order("created_at", { ascending: false });
 }
 
-export async function getChangeInputById(supabase: SupabaseClient, changeInputId: string) {
+export async function getChangeInputById(
+  supabase: SupabaseClient,
+  changeInputId: string,
+): Promise<{ data: ChangeInput | null; error: PostgrestError | null }> {
   return supabase.from("change_inputs").select("*").eq("id", changeInputId).maybeSingle();
 }
 

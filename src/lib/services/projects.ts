@@ -17,7 +17,10 @@ export async function listProjects(supabase: SupabaseClient) {
   return supabase.from("projects").select("*").order("created_at", { ascending: false });
 }
 
-export async function getProjectById(supabase: SupabaseClient, projectId: string) {
+export async function getProjectById(
+  supabase: SupabaseClient,
+  projectId: string,
+): Promise<{ data: Project | null; error: PostgrestError | null }> {
   return supabase.from("projects").select("*").eq("id", projectId).maybeSingle();
 }
 

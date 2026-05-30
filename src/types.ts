@@ -82,14 +82,14 @@ export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
 export const createChangeInputSchema = z.object({
   project_id: z.uuid(),
   title: z.string().trim().optional().nullable(),
-  raw_content: z.string().trim().min(1),
+  raw_content: z.string().trim().min(1).max(65536),
 });
 export type CreateChangeInputInput = z.infer<typeof createChangeInputSchema>;
 
 export const updateChangeInputSchema = z
   .object({
     title: z.string().trim().optional().nullable(),
-    raw_content: z.string().trim().min(1).optional(),
+    raw_content: z.string().trim().min(1).max(65536).optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: "At least one field is required",

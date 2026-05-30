@@ -6,7 +6,7 @@ PatchPost turns game-repo changes into player-facing copy (changelogs, social dr
 
 ## Hard rules
 
-- **Secrets & env (only place):** Never commit `.env`, `.dev.vars`, or real `SUPABASE_*`. Local: duplicate @.env.example as `.env` and `.dev.vars` (`cp .env.example .env` in Git Bash/macOS/Linux; `Copy-Item .env.example .env` in PowerShell). Same `SUPABASE_URL` / `SUPABASE_KEY` names; values from `npx supabase start` or the Supabase dashboard. Prod: `npx wrangler secret put SUPABASE_URL` and `SUPABASE_KEY` — not in git. Variables are server-only (@astro.config.mjs `env.schema`); never expose in client bundles.
+- **Secrets & env (only place):** Never commit `.env`, `.dev.vars`, or real `SUPABASE_*` / `GEMINI_API_KEY`. Local: duplicate @.env.example as `.env` and `.dev.vars` (`cp .env.example .env` in Git Bash/macOS/Linux; `Copy-Item .env.example .env` in PowerShell). Same `SUPABASE_URL` / `SUPABASE_KEY` names; values from `npx supabase start` or the Supabase dashboard. Optional generation: `GEMINI_API_KEY`, `GEMINI_MODEL`, `AI_PROVIDER` (`mock` | leave unset with key for Gemini). Prod: `npx wrangler secret put SUPABASE_URL`, `SUPABASE_KEY`, and `GEMINI_API_KEY` when using live AI — not in git. Variables are server-only (@astro.config.mjs `env.schema`); never expose in client bundles.
 - Full SSR (`output: "server"` in @astro.config.mjs). Every `src/pages/api/` route: `export const prerender = false`.
 - Auth gates: extend the **public-route allowlist** in @src/middleware.ts (`PUBLIC_EXACT`, `PUBLIC_PREFIXES`) when adding routes that must stay reachable without a session. Default is catch-all protection.
 - Preserve @context/ (bootstrap metadata).
