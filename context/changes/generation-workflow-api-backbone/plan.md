@@ -409,10 +409,10 @@ No migrations. Requires F-02 schema applied. CI continues using mock provider wi
 
 #### Automated
 
-- [x] 4.1 Lint passes: `npm run lint`
-- [x] 4.2 Production build passes: `npm run build`
+- [x] 4.1 Lint passes: `npm run lint` — db3080a
+- [x] 4.2 Production build passes: `npm run build` — db3080a
 
 #### Manual
 
-- [x] 4.3 GET `/api/dev/f01-generation-smoke` returns ok when signed in
+- [x] 4.3 GET `/api/dev/f01-generation-smoke` returns ok when signed in — db3080a
 - [ ] 4.4 Optional Gemini live smoke with Polish input
