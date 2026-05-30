@@ -33,9 +33,7 @@ export default function DraftEditForm({ projectId, draftId, initialBody, showRev
   }
 
   function handleCancel() {
-    setBody(initialBody);
-    setBodyError(undefined);
-    setSubmitError(null);
+    window.location.assign(`/app/projects/${projectId}/drafts`);
   }
 
   async function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
@@ -126,7 +124,7 @@ export default function DraftEditForm({ projectId, draftId, initialBody, showRev
         <Button
           type="button"
           variant="outline"
-          disabled={isSubmitting || !isDirty}
+          disabled={isSubmitting}
           onClick={handleCancel}
           className="rounded-lg border-white/20 bg-white/10 text-white hover:bg-white/20"
         >
