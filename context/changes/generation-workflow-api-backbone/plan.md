@@ -386,12 +386,12 @@ No migrations. Requires F-02 schema applied. CI continues using mock provider wi
 
 #### Automated
 
-- [x] 2.1 Lint passes: `npm run lint`
-- [x] 2.2 Production build passes: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint` — adf38b1
+- [x] 2.2 Production build passes: `npm run build` — adf38b1
 
 #### Manual
 
-- [x] 2.3 Workflow completes classify → generate → persist via MockProvider (via smoke or curl)
+- [x] 2.3 Workflow completes classify → generate → persist via MockProvider (via smoke or curl) — adf38b1
 
 ### Phase 3: JSON HTTP API routes
 
@@ -403,7 +403,7 @@ No migrations. Requires F-02 schema applied. CI continues using mock provider wi
 #### Manual
 
 - [ ] 3.3 POST change-inputs + generation-runs succeed authenticated
-- [ ] 3.4 Unauthenticated and wrong UUID cases return expected errors
+- [x] 3.4 Unauthenticated and wrong UUID cases return expected errors
 
 ### Phase 4: Dev smoke route and verification
 
