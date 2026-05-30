@@ -84,12 +84,13 @@ async function callGemini(
   user: string,
   jsonMode: boolean,
 ): Promise<string> {
+  const trimmedKey = apiKey.trim();
   const url = `${GEMINI_API_BASE}/${model}:generateContent`;
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-goog-api-key": apiKey,
+      "x-goog-api-key": trimmedKey,
     },
     body: JSON.stringify({
       systemInstruction: {

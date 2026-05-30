@@ -17,6 +17,13 @@ const createGenerationRunBodySchema = z.object({
   tone: defaultToneSchema.optional(),
 });
 
+function workflowErrorMessage(error: GenerationWorkflowError): string {
+  if (import.meta.env.DEV && error.cause instanceof GenerationProviderError) {
+    return error.cause.message;
+  }
+  return error.message;
+}
+
 export const POST: APIRoute = async (context) => {
   const projectId = parseUuidParam(context.params.id);
   if (!projectId) {
@@ -81,7 +88,7 @@ export const POST: APIRoute = async (context) => {
         case "provider_rate_limit":
           return jsonError(503, error.message);
         case "provider_error":
-          return jsonError(502, error.message);
+          return jsonError(502, workflowErrorMessage(error));
         case "storage":
           return jsonError(503, error.message);
       }

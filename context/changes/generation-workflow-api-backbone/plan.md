@@ -417,4 +417,4 @@ No migrations. Requires F-02 schema applied. CI continues using mock provider wi
 #### Manual
 
 - [x] 4.3 GET `/api/dev/f01-generation-smoke` returns ok when signed in — db3080a
-- [ ] 4.4 Optional Gemini live smoke with Polish input
+- [x] 4.4 Optional Gemini live smoke with Polish input — verified via `/api/dev/f01-gemini-smoke`: `provider:"gemini"`, `model:"gemini-2.5-flash-lite"`, `outputLanguage:"pl"`, `cleanedUp:true`

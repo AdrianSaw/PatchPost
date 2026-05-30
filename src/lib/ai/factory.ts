@@ -18,7 +18,7 @@ export function getGenerationProvider(): GenerationProvider {
   if (GEMINI_API_KEY) {
     const trimmedModel = GEMINI_MODEL?.trim();
     const model = trimmedModel && trimmedModel.length > 0 ? trimmedModel : DEFAULT_GEMINI_MODEL;
-    return createGeminiProvider(GEMINI_API_KEY, model);
+    return createGeminiProvider(GEMINI_API_KEY.trim(), model);
   }
 
   if (import.meta.env.PROD) {
