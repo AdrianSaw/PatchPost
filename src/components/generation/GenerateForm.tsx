@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { FileText, Sparkles } from "lucide-react";
 import { ServerError } from "@/components/auth/ServerError";
+import { SubmitButton } from "@/components/auth/SubmitButton";
 import { FormField } from "@/components/auth/FormField";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,35 +51,39 @@ export default function GenerateForm({
     setSubmitError(null);
     setIsSubmitting(true);
 
-    const trimmedTitle = title.trim();
-    const changeInputResult = await createChangeInput(projectId, {
-      title: trimmedTitle || null,
-      raw_content: rawContent.trim(),
-    });
+    try {
+      const trimmedTitle = title.trim();
+      const changeInputResult = await createChangeInput(projectId, {
+        title: trimmedTitle || null,
+        raw_content: rawContent.trim(),
+      });
 
-    if (!changeInputResult.ok) {
-      setSubmitError(changeInputResult.message);
+      if (!changeInputResult.ok) {
+        setSubmitError(changeInputResult.message);
+        return;
+      }
+
+      const generationResult = await runGeneration(
+        projectId,
+        {
+          change_input_id: changeInputResult.data.changeInput.id,
+          output_type: outputType,
+          ...(tone ? { tone: tone as DefaultTone } : {}),
+        },
+        { useDevMockProvider: showDevMockToggle && useDevMockProvider },
+      );
+
+      if (!generationResult.ok) {
+        setSubmitError(generationResult.message);
+        return;
+      }
+
+      window.location.assign(`/app/projects/${projectId}/drafts?success=generated`);
+    } catch {
+      setSubmitError("Something went wrong. Check your connection and try again.");
+    } finally {
       setIsSubmitting(false);
-      return;
     }
-
-    const generationResult = await runGeneration(
-      projectId,
-      {
-        change_input_id: changeInputResult.data.changeInput.id,
-        output_type: outputType,
-        ...(tone ? { tone: tone as DefaultTone } : {}),
-      },
-      { useDevMockProvider: showDevMockToggle && useDevMockProvider },
-    );
-
-    if (!generationResult.ok) {
-      setSubmitError(generationResult.message);
-      setIsSubmitting(false);
-      return;
-    }
-
-    window.location.assign(`/app/projects/${projectId}/drafts?success=generated`);
   }
 
   return (
@@ -181,23 +185,9 @@ export default function GenerateForm({
 
       <ServerError message={submitError} />
 
-      <Button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full rounded-lg bg-purple-600 px-4 py-2 font-medium text-white transition-colors hover:bg-purple-500"
-      >
-        {isSubmitting ? (
-          <span className="flex items-center gap-2">
-            <span className="size-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-            Generating...
-          </span>
-        ) : (
-          <span className="flex items-center gap-2">
-            <Sparkles className="size-4" />
-            Generate draft
-          </span>
-        )}
-      </Button>
+      <SubmitButton pending={isSubmitting} pendingText="Generating..." icon={<Sparkles className="size-4" />}>
+        Generate draft
+      </SubmitButton>
     </form>
   );
 }

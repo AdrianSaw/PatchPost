@@ -12,6 +12,7 @@ export type DraftsPageData =
       drafts: ProjectDraftHistoryItem[];
       showSuccessBanner: boolean;
       listError: string | null;
+      listTruncated: boolean;
     };
 
 export async function loadDraftsPage(
@@ -27,7 +28,7 @@ export async function loadDraftsPage(
     return { kind: "redirect", to: "/app/projects" };
   }
 
-  const { data, error } = await listProjectDraftHistory(supabase, page.project.id);
+  const { data, error, truncated } = await listProjectDraftHistory(supabase, page.project.id);
 
   return {
     kind: "ok",
@@ -35,5 +36,6 @@ export async function loadDraftsPage(
     drafts: data ?? [],
     showSuccessBanner: astro.url.searchParams.get("success") === "generated",
     listError: error ? "Unable to load draft history. Please try again." : null,
+    listTruncated: truncated,
   };
 }

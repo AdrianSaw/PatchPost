@@ -10,12 +10,22 @@ import type {
 import { createGeneratedOutputSchema, updateGeneratedOutputSchema } from "@/types";
 
 export interface ProjectDraftHistoryItem {
-  draft: GeneratedOutput;
+  draft: GeneratedOutputListRow;
   output_type: OutputType | null;
   tone: DefaultTone | null;
 }
 
-interface DraftHistoryQueryRow extends GeneratedOutput {
+export type GeneratedOutputListRow = Pick<
+  GeneratedOutput,
+  "id" | "project_id" | "generation_run_id" | "title" | "content" | "edited_content" | "created_at"
+>;
+
+const PROJECT_DRAFT_HISTORY_LIMIT = 50;
+
+const DRAFT_HISTORY_LIST_COLUMNS =
+  "id, project_id, generation_run_id, title, content, edited_content, created_at" as const;
+
+interface DraftHistoryQueryRow extends GeneratedOutputListRow {
   generation_runs: { output_type: OutputType | null; tone: DefaultTone | null } | null;
 }
 
@@ -69,15 +79,16 @@ export async function listGeneratedOutputsByProject(supabase: SupabaseClient, pr
 export async function listProjectDraftHistory(
   supabase: SupabaseClient,
   projectId: string,
-): Promise<{ data: ProjectDraftHistoryItem[] | null; error: PostgrestError | null }> {
+): Promise<{ data: ProjectDraftHistoryItem[] | null; error: PostgrestError | null; truncated: boolean }> {
   const { data, error } = await supabase
     .from("generated_outputs")
-    .select("*, generation_runs ( output_type, tone )")
+    .select(`${DRAFT_HISTORY_LIST_COLUMNS}, generation_runs ( output_type, tone )`)
     .eq("project_id", projectId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(PROJECT_DRAFT_HISTORY_LIMIT);
 
   if (error) {
-    return { data: null, error };
+    return { data: null, error, truncated: false };
   }
 
   const items = (data as DraftHistoryQueryRow[] | null)?.map((row) => {
@@ -89,7 +100,12 @@ export async function listProjectDraftHistory(
     } satisfies ProjectDraftHistoryItem;
   });
 
-  return { data: items ?? [], error: null };
+  const rows = items ?? [];
+  return {
+    data: rows,
+    error: null,
+    truncated: rows.length === PROJECT_DRAFT_HISTORY_LIMIT,
+  };
 }
 
 export async function getGeneratedOutputById(

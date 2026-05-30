@@ -6,17 +6,10 @@ import { SubmitButton } from "@/components/auth/SubmitButton";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { TONE_LABELS } from "@/lib/generation/labels";
 import { cn } from "@/lib/utils";
 import type { DefaultTone } from "@/types";
 import { defaultToneSchema } from "@/types";
-
-const TONE_LABELS: Record<DefaultTone, string> = {
-  professional: "Professional",
-  friendly: "Friendly",
-  hype: "Hype",
-  indie_devlog: "Indie devlog",
-  technical: "Technical",
-};
 
 export interface ProjectFormValues {
   name?: string;
