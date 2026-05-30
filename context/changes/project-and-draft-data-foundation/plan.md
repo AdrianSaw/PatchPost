@@ -355,14 +355,14 @@ Low volume MVP (PRD: small users/data). Indexes on `owner_id` and `project_id` a
 
 #### Automated
 
-- [x] 2.1 Lint passes: `npm run lint`
-- [x] 2.2 Production build passes: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint` — ff01a72
+- [x] 2.2 Production build passes: `npm run build` — ff01a72
 
 #### Manual
 
-- [x] 2.3 `npx supabase db reset` applies both migrations cleanly
-- [x] 2.4 Child insert chain succeeds for owner; cross-user access denied
-- [x] 2.5 Project delete cascades to all child rows
+- [x] 2.3 `npx supabase db reset` applies both migrations cleanly — ff01a72
+- [x] 2.4 Child insert chain succeeds for owner; cross-user access denied — ff01a72
+- [x] 2.5 Project delete cascades to all child rows — ff01a72
 
 ### Phase 3: Types and service layer
 
