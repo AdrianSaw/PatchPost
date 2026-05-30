@@ -1,0 +1,14 @@
+-- Optional local seed data for PatchPost domain tables.
+--
+-- Seed rows require a real auth.users id from your local Supabase instance.
+-- After creating a user in Studio (Authentication → Users), you can uncomment
+-- and replace the placeholder UUID below, then run: npx supabase db reset
+--
+-- Example (do not run with a fake UUID):
+-- insert into public.projects (owner_id, name, description)
+-- values ('00000000-0000-0000-0000-000000000000', 'Demo game', 'Local smoke-test project');
+--
+-- After a project exists, you can chain child rows (replace UUIDs):
+-- insert into public.change_inputs (project_id, raw_content, created_by) values (...);
+-- insert into public.generation_runs (project_id, change_input_id, created_by, status) values (...);
+-- insert into public.generated_outputs (project_id, generation_run_id, content) values (...);
