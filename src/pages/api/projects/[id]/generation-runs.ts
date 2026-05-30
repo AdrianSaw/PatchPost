@@ -1,8 +1,12 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
 import { jsonError, jsonResponse, parseJsonBody, parseUuidParam } from "@/lib/api/generation-api";
+import { getGenerationProvider } from "@/lib/ai/factory";
+import { mockProvider } from "@/lib/ai/mock-provider";
 import { createClient } from "@/lib/supabase";
+import { GenerationProviderError } from "@/lib/ai/provider";
 import { GenerationWorkflowError, runGenerationWorkflow } from "@/lib/services/generation-workflow";
+import { getProjectById } from "@/lib/services/projects";
 import { defaultToneSchema, outputTypeSchema } from "@/types";
 
 export const prerender = false;
@@ -33,18 +37,34 @@ export const POST: APIRoute = async (context) => {
     return jsonError(401, "Not authenticated");
   }
 
+  const { data: project, error: projectError } = await getProjectById(supabase, projectId);
+  if (projectError) {
+    return jsonError(503, "Failed to load project");
+  }
+  if (!project) {
+    return jsonError(404, "Project not found");
+  }
+
   const parsedBody = await parseJsonBody(context.request, createGenerationRunBodySchema);
   if ("error" in parsedBody) {
     return parsedBody.error;
   }
 
   try {
-    const result = await runGenerationWorkflow(supabase, user.id, {
-      projectId,
-      changeInputId: parsedBody.data.change_input_id,
-      outputType: parsedBody.data.output_type,
-      tone: parsedBody.data.tone ?? null,
-    });
+    const useMockProvider = import.meta.env.DEV && context.request.headers.get("x-dev-mock-provider") === "1";
+    const provider = useMockProvider ? mockProvider : getGenerationProvider();
+
+    const result = await runGenerationWorkflow(
+      supabase,
+      user.id,
+      {
+        projectId,
+        changeInputId: parsedBody.data.change_input_id,
+        outputType: parsedBody.data.output_type,
+        tone: parsedBody.data.tone ?? null,
+      },
+      provider,
+    );
 
     return jsonResponse(201, {
       generationRun: result.generationRun,
@@ -65,6 +85,9 @@ export const POST: APIRoute = async (context) => {
         case "storage":
           return jsonError(503, error.message);
       }
+    }
+    if (error instanceof GenerationProviderError) {
+      return jsonError(503, error.message);
     }
     return jsonError(503, "Generation failed");
   }

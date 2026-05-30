@@ -84,10 +84,13 @@ async function callGemini(
   user: string,
   jsonMode: boolean,
 ): Promise<string> {
-  const url = `${GEMINI_API_BASE}/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const url = `${GEMINI_API_BASE}/${model}:generateContent`;
   const response = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey,
+    },
     body: JSON.stringify({
       systemInstruction: {
         parts: [{ text: system }],
@@ -156,6 +159,7 @@ function parseClassificationJson(text: string): ClassifyResult {
 export function createGeminiProvider(apiKey: string, model = DEFAULT_GEMINI_MODEL): GenerationProvider {
   return {
     name: "gemini",
+    model,
 
     async classify(input: ClassifyRequest): Promise<ClassifyResult> {
       const prompt = buildClassifyPrompt(input.project, input.changeInput);

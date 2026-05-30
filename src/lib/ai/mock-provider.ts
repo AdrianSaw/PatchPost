@@ -67,6 +67,7 @@ function buildMockGenerate(input: GenerateRequest): GenerateResult {
 
 export const mockProvider: GenerationProvider = {
   name: "mock",
+  model: null,
 
   classify(input: ClassifyRequest): Promise<ClassifyResult> {
     return Promise.resolve(buildMockClassification(input.changeInput.raw_content));

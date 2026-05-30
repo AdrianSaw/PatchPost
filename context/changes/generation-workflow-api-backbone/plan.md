@@ -269,6 +269,8 @@ Expose FR-003/FR-004 contract as authenticated JSON endpoints under `/api/projec
 
 **Contract**: Confirm no new public-route allowlist entries needed.
 
+**Addendum (impl):** Unauthenticated `/api/*` returns `401` JSON instead of redirect to signin — required for JSON API manual verification (3.4).
+
 ### Success Criteria:
 
 #### Automated Verification:
@@ -402,7 +404,7 @@ No migrations. Requires F-02 schema applied. CI continues using mock provider wi
 
 #### Manual
 
-- [ ] 3.3 POST change-inputs + generation-runs succeed authenticated
+- [x] 3.3 POST change-inputs + generation-runs succeed authenticated
 - [x] 3.4 Unauthenticated and wrong UUID cases return expected errors — 4206860
 
 ### Phase 4: Dev smoke route and verification

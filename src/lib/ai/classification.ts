@@ -22,7 +22,7 @@ export const classificationItemSchema = z.object({
 });
 
 export const classificationResultSchema = z.object({
-  items: z.array(classificationItemSchema).min(1),
+  items: z.array(classificationItemSchema).min(1).max(50),
 });
 
 export type ClassificationCategory = z.infer<typeof classificationCategorySchema>;

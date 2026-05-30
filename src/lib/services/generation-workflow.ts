@@ -64,7 +64,11 @@ function formatGeneratedContent(
 }
 
 async function markRunFailed(supabase: SupabaseClient, generationRunId: string): Promise<void> {
-  await updateGenerationRun(supabase, generationRunId, { status: "failed" });
+  const { error } = await updateGenerationRun(supabase, generationRunId, { status: "failed" });
+  if (error && import.meta.env.DEV) {
+    // eslint-disable-next-line no-console -- secondary failure after provider error; run may stay draft
+    console.error(`[generation] Failed to mark run ${generationRunId} as failed:`, error.message);
+  }
 }
 
 function wrapProviderError(error: unknown): GenerationWorkflowError {
@@ -129,7 +133,7 @@ export async function runGenerationWorkflow(
   const snapshot: PromptSnapshot = {
     v: 1,
     provider: provider.name,
-    model: provider.name === "gemini" ? "gemini-2.5-flash-lite" : null,
+    model: provider.model,
     classifiedItems,
     outputLanguage,
   };

@@ -1,14 +1,34 @@
 import type { APIRoute } from "astro";
 import { mockProvider } from "@/lib/ai/mock-provider";
 import { createClient } from "@/lib/supabase";
-import { createChangeInput } from "@/lib/services/change-inputs";
-import { runGenerationWorkflow } from "@/lib/services/generation-workflow";
 import { createProject, deleteProject } from "@/lib/services/projects";
 
 export const prerender = false;
 
+const DEV_MOCK_HEADER = "x-dev-mock-provider";
+
+async function postJson(
+  url: string,
+  cookie: string,
+  body: unknown,
+  extraHeaders: Record<string, string> = {},
+): Promise<{ status: number; payload: unknown }> {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      cookie,
+      ...extraHeaders,
+    },
+    body: JSON.stringify(body),
+  });
+  const payload = (await response.json()) as unknown;
+  return { status: response.status, payload };
+}
+
 /**
- * F-01 manual verification only. Signed-in GET runs classify/generate/persist smoke with MockProvider.
+ * F-01 manual verification only. Signed-in GET exercises HTTP change-inputs +
+ * generation-runs routes (3.3) with MockProvider via dev header.
  */
 export const GET: APIRoute = async (context) => {
   if (!import.meta.env.DEV) {
@@ -35,6 +55,9 @@ export const GET: APIRoute = async (context) => {
     });
   }
 
+  const cookie = context.request.headers.get("cookie") ?? "";
+  const origin = new URL(context.request.url).origin;
+
   const { data: project, error: projectError } = await createProject(supabase, user.id, {
     name: `F-01 smoke ${String(Date.now())}`,
     default_tone: "professional",
@@ -46,33 +69,43 @@ export const GET: APIRoute = async (context) => {
     });
   }
 
-  const { data: changeInput, error: inputError } = await createChangeInput(supabase, user.id, {
-    project_id: project.id,
-    title: "Smoke input",
-    raw_content: "Fixed collision bug in level 3",
-  });
-  if (inputError || !changeInput) {
-    await deleteProject(supabase, project.id);
-    return new Response(JSON.stringify({ ok: false, step: "createChangeInput", error: inputError }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
   try {
-    const result = await runGenerationWorkflow(
-      supabase,
-      user.id,
+    const changeInputResponse = await postJson(`${origin}/api/projects/${project.id}/change-inputs`, cookie, {
+      title: "Smoke input",
+      raw_content: "Fixed collision bug in level 3",
+    });
+    if (changeInputResponse.status !== 201) {
+      throw new Error(`change-inputs HTTP ${String(changeInputResponse.status)}`);
+    }
+
+    const changeInputPayload = changeInputResponse.payload as {
+      changeInput?: { id?: string };
+    };
+    const changeInputId = changeInputPayload.changeInput?.id;
+    if (!changeInputId) {
+      throw new Error("change-inputs response missing changeInput.id");
+    }
+
+    const generationResponse = await postJson(
+      `${origin}/api/projects/${project.id}/generation-runs`,
+      cookie,
       {
-        projectId: project.id,
-        changeInputId: changeInput.id,
-        outputType: "changelog",
+        change_input_id: changeInputId,
+        output_type: "changelog",
         tone: "professional",
       },
-      mockProvider,
+      { [DEV_MOCK_HEADER]: "1" },
     );
+    if (generationResponse.status !== 201) {
+      throw new Error(`generation-runs HTTP ${String(generationResponse.status)}`);
+    }
 
-    if (!result.generatedOutput.content.trim()) {
+    const generationPayload = generationResponse.payload as {
+      generationRun?: { id?: string };
+      generatedOutput?: { id?: string; content?: string };
+      classifiedItems?: unknown[];
+    };
+    if (!generationPayload.generatedOutput?.content?.trim()) {
       throw new Error("Generated output content is empty");
     }
 
@@ -82,12 +115,13 @@ export const GET: APIRoute = async (context) => {
       JSON.stringify({
         ok: true,
         provider: mockProvider.name,
+        httpVerified: true,
         created: {
           projectId: project.id,
-          changeInputId: changeInput.id,
-          generationRunId: result.generationRun.id,
-          generatedOutputId: result.generatedOutput.id,
-          classifiedItemCount: result.classifiedItems.length,
+          changeInputId,
+          generationRunId: generationPayload.generationRun?.id,
+          generatedOutputId: generationPayload.generatedOutput.id,
+          classifiedItemCount: generationPayload.classifiedItems?.length ?? 0,
         },
         cleanedUp: true,
       }),
@@ -98,7 +132,7 @@ export const GET: APIRoute = async (context) => {
     return new Response(
       JSON.stringify({
         ok: false,
-        step: "runGenerationWorkflow",
+        step: "httpApiSmoke",
         error: error instanceof Error ? error.message : "Unknown error",
       }),
       { status: 500, headers: { "Content-Type": "application/json" } },

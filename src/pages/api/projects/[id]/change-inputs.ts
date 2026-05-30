@@ -9,7 +9,7 @@ export const prerender = false;
 
 const createChangeInputBodySchema = z.object({
   title: z.string().trim().optional().nullable(),
-  raw_content: z.string().trim().min(1),
+  raw_content: z.string().trim().min(1).max(65536),
 });
 
 export const POST: APIRoute = async (context) => {

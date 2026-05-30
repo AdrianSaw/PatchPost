@@ -28,6 +28,7 @@ export interface GenerateResult {
 
 export interface GenerationProvider {
   readonly name: string;
+  readonly model: string | null;
   classify(input: ClassifyRequest): Promise<ClassifyResult>;
   generate(input: GenerateRequest): Promise<GenerateResult>;
 }
