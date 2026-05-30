@@ -1,0 +1,19 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Topbar from "@/components/Topbar.astro";
+
+interface Props {
+  title?: string;
+}
+
+const { title = "PatchPost" } = Astro.props;
+---
+
+<Layout title={title}>
+  <div class="bg-cosmic min-h-screen p-4">
+    <div class="mx-auto max-w-3xl">
+      <Topbar />
+      <slot />
+    </div>
+  </div>
+</Layout>

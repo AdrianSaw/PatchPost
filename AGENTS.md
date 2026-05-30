@@ -20,7 +20,7 @@ PatchPost turns game-repo changes into player-facing copy (changelogs, social dr
 - Auth API: `src/pages/api/auth/{signin,signout}.ts`
 - Auth UI: `src/pages/auth/signin.astro`
 - Access control: invite-only — users are provisioned in Supabase Auth dashboard only; no public signup and no app-level email allowlist env.
-- Protected example: @src/pages/dashboard.astro
+- Protected example: @src/pages/app/projects/index.astro
 
 ## Project structure
 

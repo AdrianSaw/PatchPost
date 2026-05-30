@@ -47,5 +47,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return context.redirect("/auth/signin");
   }
 
+  if (pathname === "/dashboard") {
+    return context.redirect("/app/projects");
+  }
+
   return next();
 });
