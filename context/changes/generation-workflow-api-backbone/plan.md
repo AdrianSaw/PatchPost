@@ -374,13 +374,13 @@ No migrations. Requires F-02 schema applied. CI continues using mock provider wi
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint` — ec1b985
-- [x] 1.2 Production build passes: `npm run build` — ec1b985
+- [x] 1.1 Lint passes: `npm run lint` — 618c85a
+- [x] 1.2 Production build passes: `npm run build` — 618c85a
 
 #### Manual
 
-- [x] 1.3 Mock provider selected without Gemini key — ec1b985
-- [x] 1.4 Gemini provider selected when `GEMINI_API_KEY` set — ec1b985
+- [x] 1.3 Mock provider selected without Gemini key — 618c85a
+- [x] 1.4 Gemini provider selected when `GEMINI_API_KEY` set — 618c85a
 
 ### Phase 2: Generation workflow orchestration
 
