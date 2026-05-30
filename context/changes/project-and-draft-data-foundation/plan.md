@@ -343,13 +343,13 @@ Low volume MVP (PRD: small users/data). Indexes on `owner_id` and `project_id` a
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint` — f19d581
-- [x] 1.2 Production build passes: `npm run build` — f19d581
+- [x] 1.1 Lint passes: `npm run lint` — 4b246d9
+- [x] 1.2 Production build passes: `npm run build` — 4b246d9
 
 #### Manual
 
-- [x] 1.3 `npx supabase db reset` applies Phase 1 migration without error — f19d581
-- [x] 1.4 Owner can insert project; other user cannot read it — f19d581
+- [x] 1.3 `npx supabase db reset` applies Phase 1 migration without error — 4b246d9
+- [x] 1.4 Owner can insert project; other user cannot read it — 4b246d9
 
 ### Phase 2: Child tables and RLS
 
