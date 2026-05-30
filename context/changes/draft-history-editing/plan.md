@@ -263,9 +263,9 @@ None — uses existing `edited_content` column and RLS update policy.
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Production build passes: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 3.3 List shows Edited badge and distinct saved success banner after edit flow
+- [x] 3.3 List shows Edited badge and distinct saved success banner after edit flow
