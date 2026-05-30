@@ -24,7 +24,7 @@ Backend schema, RLS, and `updateGeneratedOutput()` already exist from F-02; S-03
 
 1. User opens draft detail; body appears in an editable textarea (inline on same page; classification stays read-only above).
 2. **Save** PATCHes `{ edited_content: "<trimmed non-empty body>" }`; on success redirects to `/app/projects/{id}/drafts?success=saved`.
-3. **Cancel** resets textarea to last saved body (`draftBody(draft)`) without API call.
+3. **Cancel** navigates back to the drafts list without an API call (discards unsaved local edits).
 4. **Revert to original** PATCHes `{ edited_content: null }`; redirects to drafts list (or reloads detail — implementer may redirect to list for consistency with Save).
 5. Drafts list shows **Edited** badge on rows where `edited_content` is non-null; `?success=saved` shows a distinct success banner.
 6. Empty trimmed body blocked client- and server-side on save.
@@ -128,10 +128,10 @@ Replace read-only `<pre>` with a React island: textarea, Save, Cancel, Revert, v
 - Props: `projectId`, `draftId`, `initialBody` (string from `draftBody(draft)`), `showRevert` (boolean — `draft.edited_content != null`).
 - State: textarea value initialized to `initialBody`; `submitError`; `isSubmitting`.
 - **Save:** client validate non-empty trim; call `updateDraftBody`; on success `window.location.assign(`/app/projects/${projectId}/drafts?success=saved`)`; on error show `ServerError`.
-- **Cancel:** reset textarea to `initialBody`; clear errors (no API).
+- **Cancel:** `window.location.assign(`/app/projects/${projectId}/drafts`)`; no API (always enabled except while submitting).
 - **Revert to original:** confirm via `window.confirm` (simple MVP); call `revertDraftToOriginal`; redirect to drafts list on success.
 - Disable Save until value differs from `initialBody` (dirty check).
-- Use `Textarea`, `SubmitButton` (with `pending` override like `GenerateForm`), `Button` variant for Cancel/Revert, `cn()`.
+- Use `Textarea`, `SubmitButton` (with `pending` override like `GenerateForm`; extend `SubmitButton` with optional `disabled` + `className` for dirty-gated Save and inline button row), `Button` variant for Cancel/Revert, `cn()`.
 - Wrap in `<form onSubmit>` for Save; Cancel/Revert as `type="button"`.
 
 #### 2. Draft detail page wiring
@@ -152,7 +152,7 @@ Replace read-only `<pre>` with a React island: textarea, Save, Cancel, Revert, v
 #### Manual Verification:
 
 - Edit body → Save → redirects to drafts list with success banner
-- Cancel restores textarea without saving
+- Cancel navigates to drafts list without saving local changes
 - Revert clears manual edits and shows original AI content on reopen
 - Empty save blocked with inline validation
 - Classification panel still works above editor
@@ -211,7 +211,7 @@ Surface edited state on list rows and distinct post-save messaging on the index 
 
 1. Sign in; open project with an existing draft (or generate one via S-03 flow).
 2. Open draft detail; change body text; Save → lands on drafts list with “saved” banner and **Edited** badge.
-3. Reopen draft; confirm edited text; Cancel after local changes → no save.
+3. Reopen draft; confirm edited text; make local changes → Cancel → returns to drafts list; reopening shows last saved body.
 4. Revert to original → badge disappears on list; detail shows AI `content`.
 5. Attempt empty save → blocked.
 6. Sign out; PATCH API → 401.

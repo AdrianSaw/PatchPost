@@ -75,7 +75,7 @@ export default function DraftEditForm({ projectId, draftId, initialBody, showRev
         return;
       }
 
-      window.location.assign(`/app/projects/${projectId}/drafts?success=saved`);
+      window.location.assign(`/app/projects/${projectId}/drafts?success=reverted`);
     } catch {
       setSubmitError("Something went wrong. Check your connection and try again.");
     } finally {

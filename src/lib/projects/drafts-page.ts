@@ -12,6 +12,7 @@ export type DraftsPageData =
       drafts: ProjectDraftHistoryItem[];
       showSuccessBanner: boolean;
       showSavedBanner: boolean;
+      showRevertedBanner: boolean;
       listError: string | null;
       listTruncated: boolean;
     };
@@ -37,6 +38,7 @@ export async function loadDraftsPage(
     drafts: data ?? [],
     showSuccessBanner: astro.url.searchParams.get("success") === "generated",
     showSavedBanner: astro.url.searchParams.get("success") === "saved",
+    showRevertedBanner: astro.url.searchParams.get("success") === "reverted",
     listError: error ? "Unable to load draft history. Please try again." : null,
     listTruncated: truncated,
   };

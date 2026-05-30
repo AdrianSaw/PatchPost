@@ -8,7 +8,7 @@ import { getProjectById } from "@/lib/services/projects";
 export const prerender = false;
 
 const patchDraftBodySchema = z.object({
-  edited_content: z.union([z.string().trim().min(1), z.null()]),
+  edited_content: z.union([z.string().trim().min(1).max(65536), z.null()]),
 });
 
 export const PATCH: APIRoute = async (context) => {

@@ -11,7 +11,7 @@ if (page.kind === "redirect") {
   return Astro.redirect(page.to);
 }
 
-const { project, drafts, showSuccessBanner, showSavedBanner, listError, listTruncated } = page;
+const { project, drafts, showSuccessBanner, showSavedBanner, showRevertedBanner, listError, listTruncated } = page;
 ---
 
 <AppLayout title={`Drafts — ${project.name}`}>
@@ -38,6 +38,14 @@ const { project, drafts, showSuccessBanner, showSavedBanner, listError, listTrun
         </a>
       </div>
     </div>
+
+    {
+      showRevertedBanner && (
+        <p class="mb-6 rounded-lg border border-green-500/30 bg-green-900/20 px-3 py-2 text-sm text-green-200">
+          Draft reverted to original.
+        </p>
+      )
+    }
 
     {
       showSavedBanner && (
