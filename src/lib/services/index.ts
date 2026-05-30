@@ -10,7 +10,9 @@ export {
   deleteGeneratedOutput,
   getGeneratedOutputById,
   listGeneratedOutputsByProject,
+  listProjectDraftHistory,
   updateGeneratedOutput,
+  type ProjectDraftHistoryItem,
 } from "@/lib/services/generated-outputs";
 export {
   createGenerationRun,
