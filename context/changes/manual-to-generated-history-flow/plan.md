@@ -320,11 +320,11 @@ None — uses existing tables and RLS.
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Production build passes: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 3.3 Drafts list shows saved outputs with channel labels and success banner after generate
-- [ ] 3.4 Draft detail displays read-only content and collapsible classification from prompt snapshot
-- [ ] 3.5 Full US-01 flow verified end-to-end while signed in
+- [x] 3.3 Drafts list shows saved outputs with channel labels and success banner after generate
+- [x] 3.4 Draft detail displays read-only content and collapsible classification from prompt snapshot
+- [x] 3.5 Full US-01 flow verified end-to-end while signed in

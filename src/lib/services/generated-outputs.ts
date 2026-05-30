@@ -92,7 +92,10 @@ export async function listProjectDraftHistory(
   return { data: items ?? [], error: null };
 }
 
-export async function getGeneratedOutputById(supabase: SupabaseClient, generatedOutputId: string) {
+export async function getGeneratedOutputById(
+  supabase: SupabaseClient,
+  generatedOutputId: string,
+): Promise<{ data: GeneratedOutput | null; error: PostgrestError | null }> {
   return supabase.from("generated_outputs").select("*").eq("id", generatedOutputId).maybeSingle();
 }
 
