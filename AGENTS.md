@@ -8,7 +8,7 @@ PatchPost turns game-repo changes into player-facing copy (changelogs, social dr
 
 - **Secrets & env (only place):** Never commit `.env`, `.dev.vars`, or real `SUPABASE_*`. Local: duplicate @.env.example as `.env` and `.dev.vars` (`cp .env.example .env` in Git Bash/macOS/Linux; `Copy-Item .env.example .env` in PowerShell). Same `SUPABASE_URL` / `SUPABASE_KEY` names; values from `npx supabase start` or the Supabase dashboard. Prod: `npx wrangler secret put SUPABASE_URL` and `SUPABASE_KEY` — not in git. Variables are server-only (@astro.config.mjs `env.schema`); never expose in client bundles.
 - Full SSR (`output: "server"` in @astro.config.mjs). Every `src/pages/api/` route: `export const prerender = false`.
-- Auth gates: extend only `PROTECTED_ROUTES` in @src/middleware.ts.
+- Auth gates: extend the **public-route allowlist** in @src/middleware.ts (`PUBLIC_EXACT`, `PUBLIC_PREFIXES`) when adding routes that must stay reachable without a session. Default is catch-all protection.
 - Preserve @context/ (bootstrap metadata).
 - Tailwind: `cn()` from @src/lib/utils.ts — no manual class string concat.
 - Supabase migrations: `supabase/migrations/YYYYMMDDHHmmss_short_description.sql`; enable RLS with explicit per-operation policies on new tables.
@@ -16,9 +16,10 @@ PatchPost turns game-repo changes into player-facing copy (changelogs, social dr
 ## Architecture
 
 - @src/lib/supabase.ts — Supabase SSR client (`@supabase/ssr`, cookies); reads `astro:env/server` secrets.
-- @src/middleware.ts — resolves `context.locals.user`; redirects unauthenticated users off protected routes.
-- Auth API: `src/pages/api/auth/{signin,signup,signout}.ts`
-- Auth UI: `src/pages/auth/{signin,signup,confirm-email}.astro`
+- @src/middleware.ts — resolves `context.locals.user`; catch-all auth via public-route allowlist (unauthenticated requests redirect to signin except listed public paths).
+- Auth API: `src/pages/api/auth/{signin,signout}.ts`
+- Auth UI: `src/pages/auth/signin.astro`
+- Access control: invite-only — users are provisioned in Supabase Auth dashboard only; no public signup and no app-level email allowlist env.
 - Protected example: @src/pages/dashboard.astro
 
 ## Project structure
