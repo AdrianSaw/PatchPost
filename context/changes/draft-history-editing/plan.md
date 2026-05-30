@@ -240,12 +240,12 @@ None — uses existing `edited_content` column and RLS update policy.
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint`
-- [x] 1.2 Production build passes: `npm run build`
+- [x] 1.1 Lint passes: `npm run lint` — c8a1461
+- [x] 1.2 Production build passes: `npm run build` — c8a1461
 
 #### Manual
 
-- [x] 1.3 PATCH saves and reverts edited_content with correct auth and validation
+- [x] 1.3 PATCH saves and reverts edited_content with correct auth and validation — c8a1461
 
 ### Phase 2: Inline edit UI on draft detail
 
