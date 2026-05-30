@@ -368,10 +368,10 @@ Low volume MVP (PRD: small users/data). Indexes on `owner_id` and `project_id` a
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Production build passes: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 3.3 Service smoke: create/list project + children under authenticated session
-- [ ] 3.4 Zod rejects invalid enum before Supabase call
+- [x] 3.3 Service smoke: create/list project + children under authenticated session
+- [x] 3.4 Zod rejects invalid enum before Supabase call
