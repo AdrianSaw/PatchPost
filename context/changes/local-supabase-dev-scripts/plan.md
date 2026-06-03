@@ -237,23 +237,23 @@ No database migration.
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint`
-- [x] 1.2 Production build passes: `npm run build`
+- [x] 1.1 Lint passes: `npm run lint` — a88033c
+- [x] 1.2 Production build passes: `npm run build` — a88033c
 
 #### Manual
 
-- [x] 1.3 Example env files exist; profile paths are gitignored
+- [x] 1.3 Example env files exist; profile paths are gitignored — a88033c
 
 ### Phase 2: npm scripts and cloud launcher
 
 #### Automated
 
-- [ ] 2.1 Lint passes: `npm run lint`
-- [ ] 2.2 Production build passes: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint`
+- [x] 2.2 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 supabase:start/stop and dev:local/dev:cloud behave as specified
+- [x] 2.3 supabase:start/stop and dev:local/dev:cloud behave as specified
 
 ### Phase 3: Documentation
 

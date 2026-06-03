@@ -4,6 +4,10 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "dev:local": "astro dev",
+    "dev:cloud": "node scripts/astro-dev-cloud.mjs",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
