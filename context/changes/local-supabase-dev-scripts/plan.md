@@ -259,9 +259,9 @@ No database migration.
 
 #### Automated
 
-- [x] 3.1 Lint passes: `npm run lint`
-- [x] 3.2 Production build passes: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint` — 32be9b8
+- [x] 3.2 Production build passes: `npm run build` — 32be9b8
 
 #### Manual
 
-- [x] 3.3 README and AGENTS describe two-profile workflow accurately
+- [x] 3.3 README and AGENTS describe two-profile workflow accurately — 32be9b8
