@@ -1,7 +1,7 @@
 ---
 change_id: local-supabase-dev-scripts
 title: Local Supabase dev scripts
-status: implemented
+status: impl_reviewed
 created: 2026-05-30
 updated: 2026-05-30
 archived_at: null

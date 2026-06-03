@@ -47,12 +47,27 @@ if (!applyEnvFile(".env.cloud", { required: true })) {
   process.exit(1);
 }
 
+const supabaseUrl = process.env.SUPABASE_URL?.trim();
+const supabaseKey = process.env.SUPABASE_KEY?.trim();
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error(
+    "SUPABASE_URL and SUPABASE_KEY must be set in .env.cloud (Publishable key from dashboard).",
+  );
+  process.exit(1);
+}
+
 const command = process.platform === "win32" ? "npx.cmd" : "npx";
 const child = spawn(command, ["astro", "dev"], {
   cwd: root,
   stdio: "inherit",
   env: process.env,
   shell: true,
+});
+
+child.on("error", (err) => {
+  console.error(err.message);
+  process.exit(1);
 });
 
 child.on("exit", (code, signal) => {
