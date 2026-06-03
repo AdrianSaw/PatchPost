@@ -3,7 +3,7 @@ project: PatchPost
 version: 1
 status: draft
 created: 2026-05-27
-updated: 2026-05-30
+updated: 2026-06-03
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -33,7 +33,7 @@ Dostęp do aplikacji jest invite-only: logowanie tak, publiczna rejestracja nie;
 |---|---|---|---|---|---|
 | F-01 | generation-workflow-api-backbone | (foundation) backend/API ma spójny przepływ dla wejścia zmian, klasyfikacji i generacji | — | FR-003, FR-004, Business Logic | done |
 | F-02 | project-and-draft-data-foundation | (foundation) warstwa danych wspiera projekty, źródła zmian i trwały zapis draftów | — | FR-002, FR-005 | done |
-| F-03 | local-supabase-dev-scripts | (foundation) dev ma jawne komendy local vs cloud Supabase (Docker vs hosted) | — | — | proposed |
+| F-03 | local-supabase-dev-scripts | (foundation) dev ma jawne komendy local vs cloud Supabase (Docker vs hosted) | — | — | done |
 | S-01 | invite-only-signin-gated-access | user on allowlist can sign in and reach gated workspace; non-allowlisted emails are rejected; public registration is unavailable | — | FR-001, Access Control | done |
 | S-02 | projects-crud-core | user can create and manage own projects | S-01, F-02 | FR-002 | done |
 | S-03 | manual-to-generated-history-flow | user can add manual changes, generate content, and save result in history | S-02, F-01, F-02 | US-01, FR-003, FR-004, FR-005 | done |
@@ -100,7 +100,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** czy wystarczą skrypty npm bez `dotenv-cli`, czy dodać zależność pod `dev:local` / `dev:cloud`.
 - **Risk:** Bez tego dev nadal działa, ale kosztem czasu na ręczne env i mylenie Docker vs hosted (osobne auth users, osobne dane).
-- **Status:** proposed
+- **Status:** done
 
 ## Slices
 
@@ -182,3 +182,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **F-01: (foundation) backend/API ma spójny kontrakt obsługi manualnego wejścia, klasyfikacji i generacji treści.** — Archived 2026-05-30 → `context/archive/2026-05-30-generation-workflow-api-backbone/`. Lesson: —.
 - **S-03: user can add manual changes, generate content, and save result in history.** — Archived 2026-05-30 → `context/archive/2026-05-30-manual-to-generated-history-flow/`. Lesson: —.
 - **S-04: user can open saved drafts and edit them in history.** — Archived 2026-05-30 → `context/archive/2026-05-30-draft-history-editing/`. Lesson: —.
+- **F-03: (foundation) developer ma jednoznaczne komendy: Supabase lifecycle (`start` / `stop` / `reset` / `push`) oraz dev przeciw lokalnemu Dockerowi vs hosted (`dev:local` / `dev:cloud` lub równoważne profile `.env.local` / `.env.cloud` + README).** — Archived 2026-06-03 → `context/archive/2026-05-30-local-supabase-dev-scripts/`. Lesson: —.
