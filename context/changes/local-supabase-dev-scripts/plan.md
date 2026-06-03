@@ -170,8 +170,8 @@ Align human and agent docs with the new workflow; remove stale `supabase init` g
 
 **Contract**:
 
-- **Local workflow:** `cp .env.local.example .env.local`, `npm run supabase:start`, paste keys, `cp` same values to `.dev.vars`, `npm run dev:local`.
-- **Cloud workflow:** `cp .env.cloud.example .env.cloud`, fill dashboard keys, mirror to `.dev.vars`, `npm run dev:cloud`.
+- **Local workflow:** `cp .env.local.example .env.local`, `npm run supabase:start`, paste **Publishable** key (CLI label) into `SUPABASE_KEY`, mirror to `.dev.vars`, `npm run dev:local`.
+- **Cloud workflow:** `cp .env.cloud.example .env.cloud`, fill dashboard Publishable/anon key, mirror to `.dev.vars`, `npm run dev:cloud`.
 - **Available Scripts** table: add `dev:local`, `dev:cloud`, `supabase:start`, `supabase:stop`.
 - Keep `npx supabase db reset` and `npx supabase db push` as documented CLI commands (not npm scripts).
 - Remove or fix step that says `npx supabase init` when `supabase/` already exists in repo.
@@ -248,20 +248,20 @@ No database migration.
 
 #### Automated
 
-- [x] 2.1 Lint passes: `npm run lint`
-- [x] 2.2 Production build passes: `npm run build`
+- [x] 2.1 Lint passes: `npm run lint` — fccd5d7
+- [x] 2.2 Production build passes: `npm run build` — fccd5d7
 
 #### Manual
 
-- [x] 2.3 supabase:start/stop and dev:local/dev:cloud behave as specified
+- [x] 2.3 supabase:start/stop and dev:local/dev:cloud behave as specified — fccd5d7
 
 ### Phase 3: Documentation
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Production build passes: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 3.3 README and AGENTS describe two-profile workflow accurately
+- [x] 3.3 README and AGENTS describe two-profile workflow accurately

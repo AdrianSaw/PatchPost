@@ -33,23 +33,23 @@ cd 10x-astro-starter
 npm install
 ```
 
-3. Set up Supabase and configure environment variables — see [Supabase Configuration](#supabase-configuration) below.
+3. Set up Supabase env profiles — see [Supabase Configuration](#supabase-configuration) below.
 
-4. Create a `.dev.vars` file for local Cloudflare dev secrets:
-
-```bash
-cp .env.example .dev.vars
-```
-
-5. Run the development server:
+4. Run the development server (local profile):
 
 ```bash
-npm run dev
+npm run dev:local
 ```
+
+(`npm run dev` is the same command; use `npm run dev:cloud` when targeting a hosted project.)
 
 ## Available Scripts
 
-- `npm run dev` - Start development server (Cloudflare workerd runtime)
+- `npm run dev` - Start dev server (loads `.env` + `.env.local` when present)
+- `npm run dev:local` - Same as `dev` — intended for local Docker Supabase (`.env.local`)
+- `npm run dev:cloud` - Dev server using `.env` + `.env.cloud` only (skips `.env.local`)
+- `npm run supabase:start` - Start local Supabase stack (Docker)
+- `npm run supabase:stop` - Stop local Supabase stack
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint with type-checked rules
@@ -74,42 +74,71 @@ npm run dev
 
 This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
 
-### First-time setup (local, no cloud project needed)
+Use **two profiles** so local Docker and hosted cloud credentials are not mixed in one file:
 
-Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
+| File | Purpose |
+| ---- | ------- |
+| `.env` | Optional shared vars (e.g. `GEMINI_*`, `AI_PROVIDER`) — copy from `.env.example` |
+| `.env.local` | Local Docker Supabase — copy from `.env.local.example` (gitignored) |
+| `.env.cloud` | Hosted Supabase — copy from `.env.cloud.example` (gitignored) |
+| `.dev.vars` | Same `SUPABASE_*` as the profile you are actively using (Cloudflare workerd reads this) |
 
-1. Create your `.env` file:
+Set `SUPABASE_KEY` to the **Publishable** key (CLI label; same role as the dashboard anon/public key). Never commit real keys or put the **Secret** service-role key in app env.
+
+### Local development (Docker)
+
+Requires [Docker](https://www.docker.com/) and ~7 GB RAM. The `supabase/` folder is already in the repo — no `supabase init` needed.
+
+1. Create the local profile:
 
 ```bash
-cp .env.example .env
+cp .env.local.example .env.local
 ```
 
-2. Initialize the local Supabase project (creates a `supabase/` config folder):
+2. Start the stack (downloads images on first run):
 
 ```bash
-npx supabase init
+npm run supabase:start
 ```
 
-3. Start the local stack (downloads Docker images on first run):
-
-```bash
-npx supabase start
-```
-
-4. Copy the credentials printed by the CLI into your `.env` and `.dev.vars`:
+3. Copy **Project URL** and **Publishable** from the CLI output into `.env.local`, then mirror the same values into `.dev.vars`:
 
 ```
 SUPABASE_URL=http://127.0.0.1:54321
-SUPABASE_KEY=<anon key from CLI output>
+SUPABASE_KEY=<Publishable key from CLI>
 ```
 
-5. To stop the stack when done:
+4. Start the app:
 
 ```bash
-npx supabase stop
+npm run dev:local
 ```
 
-The local Studio UI is available at `http://localhost:54323`.
+5. Stop the stack when done:
+
+```bash
+npm run supabase:stop
+```
+
+Local Studio: `http://127.0.0.1:54323` (see CLI output after `supabase:start`).
+
+### Cloud development (hosted project)
+
+1. Create the cloud profile:
+
+```bash
+cp .env.cloud.example .env.cloud
+```
+
+2. Fill `SUPABASE_URL` and `SUPABASE_KEY` from [Supabase dashboard](https://supabase.com/dashboard) → **Project Settings → API** (Publishable / anon key).
+
+3. Mirror the same `SUPABASE_*` values into `.dev.vars`.
+
+4. Start the app (does not load `.env.local`):
+
+```bash
+npm run dev:cloud
+```
 
 ### Database migrations
 
@@ -131,7 +160,7 @@ PatchPost is **invite-only**: only people the product owner adds in Supabase can
 
 **Add a user (local or hosted):**
 
-1. Open Supabase Studio (local: `http://localhost:54323` after `npx supabase start`) or [Supabase dashboard](https://supabase.com/dashboard) → **Authentication → Users**.
+1. Open Supabase Studio (local: after `npm run supabase:start`) or [Supabase dashboard](https://supabase.com/dashboard) → **Authentication → Users**.
 2. **Invite user** (sends email) or **Add user** (email + password).
 3. Ensure the email is listed in Auth before they use `/auth/signin`.
 
@@ -140,21 +169,7 @@ PatchPost is **invite-only**: only people the product owner adds in Supabase can
 - **Local:** `supabase/config.toml` sets `enable_signup = false` under `[auth]` and `[auth.email]` (already configured in this repo).
 - **Hosted project:** Authentication → **Providers** → **Email** → turn off **Enable sign ups**.
 
-Only `SUPABASE_URL` and `SUPABASE_KEY` are required in `.env` / `.dev.vars` and as Wrangler secrets — no `ALLOWED_EMAILS` variable.
-
-### Using a cloud Supabase project instead
-
-If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
-
-| Variable       | Description                                                |
-| -------------- | ---------------------------------------------------------- |
-| `SUPABASE_URL` | Project URL from Supabase dashboard → Settings → API       |
-| `SUPABASE_KEY` | `anon` public key from Supabase dashboard → Settings → API |
-
-```
-SUPABASE_URL=https://<project-ref>.supabase.co
-SUPABASE_KEY=<anon-key>
-```
+Only `SUPABASE_URL` and `SUPABASE_KEY` are required in the active profile and `.dev.vars` (plus Wrangler secrets in production) — no `ALLOWED_EMAILS` variable.
 
 ### Email confirmation in local development
 
@@ -182,7 +197,7 @@ This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/) as
 0. **One-time:** register a `workers.dev` subdomain in the [Cloudflare Workers onboarding](https://dash.cloudflare.com/?to=/:account/workers/onboarding) dashboard (required before the first public URL).
 
 1. Log in: `npx wrangler login`
-2. Set runtime secrets on the Worker (production Supabase **cloud** URL and **anon** key — not `127.0.0.1`):
+2. Set runtime secrets on the Worker (production Supabase **cloud** URL and **Publishable** key — not `127.0.0.1`):
 
 ```bash
 npx wrangler secret put SUPABASE_URL
@@ -210,7 +225,7 @@ Repository secrets required:
 | Secret | Purpose |
 |--------|---------|
 | `SUPABASE_URL` | Build-time `astro:env` (same as production) |
-| `SUPABASE_KEY` | Build-time `astro:env` (anon key) |
+| `SUPABASE_KEY` | Build-time `astro:env` (Publishable / anon key) |
 | `CLOUDFLARE_API_TOKEN` | Wrangler deploy (template: Edit Cloudflare Workers) |
 | `CLOUDFLARE_ACCOUNT_ID` | Wrangler account binding (see `account_id` in `wrangler.jsonc`) |
 
