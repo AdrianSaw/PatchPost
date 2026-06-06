@@ -326,8 +326,8 @@ No database migrations. Requires F-02 schema from existing `supabase/migrations/
 
 #### Automated
 
-- [x] 2.1 `npm test` passes (includes `projects-form-post-contracts.test.ts`)
-- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.1 `npm test` passes (includes `projects-form-post-contracts.test.ts`) — 18bf59f
+- [x] 2.2 Lint passes: `npm run lint` — 18bf59f
 
 #### Manual
 
