@@ -433,7 +433,7 @@ No database migrations. CI may need no new GitHub secrets for Vitest (ephemeral 
 
 #### Manual
 
-- [ ] 5.2 PR CI shows green Vitest + e2e jobs
+- [x] 5.2 PR CI shows green Vitest + e2e jobs — 2843965
 
 ### Phase 6: Test-plan closeout
 
