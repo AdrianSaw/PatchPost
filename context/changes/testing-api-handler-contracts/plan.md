@@ -349,9 +349,9 @@ No database migrations. Requires F-02 schema from existing `supabase/migrations/
 
 #### Automated
 
-- [x] 4.1 `npm test` passes
-- [x] 4.2 Lint passes: `npm run lint`
+- [x] 4.1 `npm test` passes — f72572c
+- [x] 4.2 Lint passes: `npm run lint` — f72572c
 
 #### Manual
 
-- [x] 4.3 §6.4 recipe matches actual helper and file names
+- [x] 4.3 §6.4 recipe matches actual helper and file names — f72572c
