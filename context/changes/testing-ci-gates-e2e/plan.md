@@ -185,6 +185,8 @@ Add Playwright dependency, config, auth fixture, and **`tests/e2e/seed.spec.ts`*
 
 **Contract**: Test directory `tests/e2e/`; single project Chromium for MVP; CI-friendly reporters.
 
+**Addendum (implemented):** Harness spec renamed to `tests/e2e/00-seed.spec.ts` for run order. E2e dev server uses port **4322** (not 4321) to avoid collision with manual `npm run dev:local`; documented in AGENTS.md and test-plan §6.3.
+
 #### 3. Auth fixture / global setup
 
 **File**: `tests/e2e/fixtures/auth.ts` and/or `tests/e2e/global-setup.ts`

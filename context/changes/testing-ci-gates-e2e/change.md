@@ -1,7 +1,7 @@
 ---
 change_id: testing-ci-gates-e2e
 title: Testing CI gates and e2e
-status: implementing
+status: implemented
 created: 2026-06-06
 updated: 2026-05-27
 archived_at: null
@@ -20,3 +20,5 @@ Planning decisions (2026-06-06): CI Strategy B (Supabase in GHA); Playwright boo
 **Phase 4 (2026-05-27):** North-star US-01 e2e (`main-flow.spec.ts`) with mock AI header; dedicated e2e dev server on 127.0.0.1:4322; island hydration helpers in auth fixture.
 
 **Phase 5 (2026-05-27):** Playwright e2e wired in CI after Vitest (same Supabase env, Chromium install step).
+
+**Phase 6 (2026-05-27):** test-plan §6.3 cookbook, AGENTS.md CI/e2e docs, `/10x-e2e` retrofit on `main-flow.spec.ts` (Risk #5 reload assertion, `E2E-RULES.md`). Full local gate green; impl-review 2026-05-27.

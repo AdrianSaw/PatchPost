@@ -1,8 +1,11 @@
 import "./tests/setup";
 import { defineConfig, devices } from "@playwright/test";
 
+const DEV_SERVER_ENV_KEYS = ["SUPABASE_URL", "SUPABASE_KEY", "NODE_ENV"] as const;
+
 const devServerEnv: Record<string, string> = {};
-for (const [key, value] of Object.entries(process.env)) {
+for (const key of DEV_SERVER_ENV_KEYS) {
+  const value = process.env[key];
   if (value !== undefined) {
     devServerEnv[key] = value;
   }

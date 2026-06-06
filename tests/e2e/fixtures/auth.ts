@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import type { Locator, Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 const AUTH_FILE = path.join(process.cwd(), "tests/e2e/.auth/user.json");
 
@@ -27,27 +27,22 @@ export function readE2eCredentials(): E2eCredentials {
 /** Wait until a React island has attached handlers to `field`. */
 export async function waitForReactHydration(field: Locator): Promise<void> {
   await field.waitFor({ state: "visible" });
-  await field.evaluate((element) =>
-    Object.keys(element).some((key) => key.startsWith("__reactFiber$") || key.startsWith("__reactProps$")),
-  );
+  await expect(async () => {
+    const hydrated = await field.evaluate((element) =>
+      Object.keys(element).some((key) => key.startsWith("__reactFiber$") || key.startsWith("__reactProps$")),
+    );
+    expect(hydrated).toBe(true);
+  }).toPass({ timeout: 15_000 });
 }
 
-/** Wait for GenerateForm island module + React handlers (fetch-based submit requires hydration). */
-export async function waitForGenerateFormReady(page: Page): Promise<void> {
+/** Wait for GenerateForm island + React handlers (fetch-based submit requires hydration). */
+export function waitForGenerateFormReady(page: Page): Promise<void> {
   const changesField = page.getByRole("textbox", { name: "Changes" });
-  const moduleLoaded = page.waitForResponse(
-    (response) => {
-      const status = response.status();
-      return (
-        response.request().method() === "GET" &&
-        response.url().includes("GenerateForm") &&
-        (status === 200 || status === 304)
-      );
-    },
-    { timeout: 30_000 },
-  );
-  await moduleLoaded;
-  await waitForReactHydration(changesField);
+  return (async () => {
+    await page.waitForURL(/\/generate/, { timeout: 30_000 });
+    await expect(changesField).toBeVisible();
+    await waitForReactHydration(changesField);
+  })();
 }
 
 /** Fill a React controlled field after the island has hydrated. */
