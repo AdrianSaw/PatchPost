@@ -385,8 +385,8 @@ No database migrations. CI may need no new GitHub secrets for Vitest (ephemeral 
 
 #### Automated
 
-- [x] 1.1 Local: `npm run lint`, `npm test` pass with Supabase
-- [x] 1.2 CI workflow includes Supabase start + full Vitest (typecheck deferred — TODO in workflow)
+- [x] 1.1 Local: `npm run lint`, `npm test` pass with Supabase — a4510cb
+- [x] 1.2 CI workflow includes Supabase start + full Vitest (typecheck deferred — TODO in workflow) — a4510cb
 
 #### Manual
 
