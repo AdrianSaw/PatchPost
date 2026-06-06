@@ -43,3 +43,9 @@ pnpm-debug.log*
 
 # MCP config (may contain API keys)
 .mcp.json
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+tests/e2e/.auth/

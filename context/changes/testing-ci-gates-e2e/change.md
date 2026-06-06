@@ -3,7 +3,7 @@ change_id: testing-ci-gates-e2e
 title: Testing CI gates and e2e
 status: implementing
 created: 2026-06-06
-updated: 2026-05-27
+updated: 2026-06-06
 archived_at: null
 ---
 
@@ -13,4 +13,6 @@ Planning decisions (2026-06-06): CI Strategy B (Supabase in GHA); Playwright boo
 
 **Re-plan (2026-05-27):** Phase 1 attempted `npm run typecheck` in CI; `astro check` reports ~25 pre-existing TypeScript errors in `src/` and `tests/`. Typecheck was **intentionally deferred** to **Phase 2 (CI typecheck gate)** so PRs are not blocked. Phase 1 shipped Vitest + Supabase CI only.
 
-**Phase 2 (2026-05-27):** Fixed all `astro check` errors; re-enabled `npm run typecheck` in CI before Vitest. CI green on PR #9 — Phase 2 complete.
+**Phase 2 (2026-05-27):** Fixed all `astro check` errors; re-enabled `npm run typecheck` in CI before Vitest. CI green on PR #9.
+
+**Phase 3 (2026-06-06):** Playwright bootstrap — `@playwright/test`, `playwright.config.ts`, `global-setup.ts`, `fixtures/auth.ts`, `seed.spec.ts`. Local seed e2e green; manual 3.3 pending.
