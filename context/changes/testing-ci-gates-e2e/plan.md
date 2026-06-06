@@ -412,7 +412,7 @@ No database migrations. CI may need no new GitHub secrets for Vitest (ephemeral 
 
 #### Manual
 
-- [ ] 3.3 Seed spec fails with clear message when Supabase or dev server is down
+- [x] 3.3 Seed spec fails with clear message when Supabase or dev server is down — 852294f
 
 ### Phase 4: North-star e2e
 

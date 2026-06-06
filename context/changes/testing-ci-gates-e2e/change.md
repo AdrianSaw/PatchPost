@@ -15,4 +15,4 @@ Planning decisions (2026-06-06): CI Strategy B (Supabase in GHA); Playwright boo
 
 **Phase 2 (2026-05-27):** Fixed all `astro check` errors; re-enabled `npm run typecheck` in CI before Vitest. CI green on PR #9.
 
-**Phase 3 (2026-06-06):** Playwright bootstrap — `@playwright/test`, `playwright.config.ts`, `global-setup.ts`, `fixtures/auth.ts`, `seed.spec.ts`. Local seed e2e green; manual 3.3 pending.
+**Phase 3 (2026-06-06):** Playwright bootstrap complete — seed e2e green; global setup fails fast with `SUPABASE_PREREQUISITE_MESSAGE` when Supabase is down.
