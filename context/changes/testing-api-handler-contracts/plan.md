@@ -331,19 +331,19 @@ No database migrations. Requires F-02 schema from existing `supabase/migrations/
 
 #### Manual
 
-- [x] 2.3 Invalid create redirect includes `?error=` when run locally
+- [x] 2.3 Invalid create redirect includes `?error=` when run locally — 18bf59f
 
 ### Phase 3: JSON API route contracts
 
 #### Automated
 
-- [ ] 3.1 `npm test` passes (all four contract suites)
-- [ ] 3.2 Lint passes: `npm run lint`
-- [ ] 3.3 Production build passes: `npm run build`
+- [x] 3.1 `npm test` passes (all four contract suites)
+- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.3 Production build passes: `npm run build`
 
 #### Manual
 
-- [ ] 3.4 Generation mock run visible in Supabase Studio after test run
+- [x] 3.4 Generation mock run visible in Supabase Studio after test run
 
 ### Phase 4: Cookbook and test-plan closeout
 
