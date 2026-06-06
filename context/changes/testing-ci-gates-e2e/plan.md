@@ -418,12 +418,12 @@ No database migrations. CI may need no new GitHub secrets for Vitest (ephemeral 
 
 #### Automated
 
-- [x] 4.1 Full `npm run test:e2e` passes locally (seed + main-flow)
-- [x] 4.2 Lint passes
+- [x] 4.1 Full `npm run test:e2e` passes locally (seed + main-flow) — c295cc9
+- [x] 4.2 Lint passes — c295cc9
 
 #### Manual
 
-- [x] 4.3 Main-flow uses mock provider path (checkbox or network evidence)
+- [x] 4.3 Main-flow uses mock provider path (checkbox or network evidence) — c295cc9
 
 ### Phase 5: Playwright in CI
 
