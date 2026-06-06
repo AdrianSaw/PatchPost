@@ -401,7 +401,7 @@ No database migrations. CI may need no new GitHub secrets for Vitest (ephemeral 
 
 #### Manual
 
-- [ ] 2.3 CI run: typecheck + Vitest + build green
+- [x] 2.3 CI run: typecheck + Vitest + build green — 5789b4b
 
 ### Phase 3: Playwright bootstrap
 

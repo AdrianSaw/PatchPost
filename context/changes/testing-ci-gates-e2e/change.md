@@ -13,4 +13,4 @@ Planning decisions (2026-06-06): CI Strategy B (Supabase in GHA); Playwright boo
 
 **Re-plan (2026-05-27):** Phase 1 attempted `npm run typecheck` in CI; `astro check` reports ~25 pre-existing TypeScript errors in `src/` and `tests/`. Typecheck was **intentionally deferred** to **Phase 2 (CI typecheck gate)** so PRs are not blocked. Phase 1 shipped Vitest + Supabase CI only.
 
-**Phase 2 (2026-05-27):** Fixed all `astro check` errors (shared `postgrest-error` helper, UUID narrowing, draft-text types, test mock typing). Re-enabled `npm run typecheck` in CI before Vitest. Awaiting CI confirmation for Progress 2.3.
+**Phase 2 (2026-05-27):** Fixed all `astro check` errors; re-enabled `npm run typecheck` in CI before Vitest. CI green on PR #9 — Phase 2 complete.
