@@ -36,7 +36,7 @@ describe.skipIf(!hasLocalSupabaseConfig())("projects API cross-owner form POST",
     form.set("_action", "update");
     form.set("name", "Stolen by User B");
 
-    const { context } = createApiContext({
+    const { context, redirects } = createApiContext({
       method: "POST",
       pathname: `/api/projects/${projectId}`,
       params: { id: projectId },
@@ -46,6 +46,7 @@ describe.skipIf(!hasLocalSupabaseConfig())("projects API cross-owner form POST",
 
     await postProjectById(context);
 
+    expect(redirects.some((url) => url.includes("error="))).toBe(true);
     const { data: project } = await getProjectById(userA.client, projectId);
     expect(project?.name).toBe(originalName);
   });
@@ -54,7 +55,7 @@ describe.skipIf(!hasLocalSupabaseConfig())("projects API cross-owner form POST",
     const form = new FormData();
     form.set("_action", "delete");
 
-    const { context } = createApiContext({
+    const { context, redirects } = createApiContext({
       method: "POST",
       pathname: `/api/projects/${projectId}`,
       params: { id: projectId },
@@ -64,6 +65,7 @@ describe.skipIf(!hasLocalSupabaseConfig())("projects API cross-owner form POST",
 
     await postProjectById(context);
 
+    expect(redirects).toContain("/app/projects");
     const { data: project } = await getProjectById(userA.client, projectId);
     expect(project?.id).toBe(projectId);
     expect(project?.name).toBe(originalName);

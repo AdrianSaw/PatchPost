@@ -161,7 +161,7 @@ TBD — see §3 Phase 3 for manual-input-only output and mock-provider contract.
 
 ### 6.6 Per-rollout-phase notes
 
-**Phase 1 — `context/changes/testing-bootstrap-auth-rls` (complete):** Vitest + local Supabase harness; integration coverage for Risks #1 (cross-owner IDOR) and #2 (unauthenticated API mutation). No Playwright, no CI test gate yet (test-plan Phase 4).
+**Phase 1 — `context/changes/testing-bootstrap-auth-rls` (complete):** Vitest + local Supabase harness; integration coverage for Risks #1 (cross-owner IDOR) and #2 (unauthenticated API mutation). Supporting extras: `ws` WebSocket polyfill (Node below 22), `mock-cookies.ts`, `astro-middleware.ts` mock. No Playwright, no CI test gate yet (test-plan Phase 4).
 
 ## 7. What We Deliberately Don't Test
 

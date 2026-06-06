@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { assertSupabaseReachable, SUPABASE_PREREQUISITE_MESSAGE } from "../setup";
+import { assertSupabaseReachable, hasLocalSupabaseConfig, SUPABASE_PREREQUISITE_MESSAGE } from "../setup";
 import { invokeMiddleware } from "../helpers/middleware-request";
 
 describe("integration harness", () => {
@@ -7,14 +7,13 @@ describe("integration harness", () => {
     expect(SUPABASE_PREREQUISITE_MESSAGE).toContain("npm run supabase:start");
   });
 
-  it("passes when local Supabase is up, or fails with a clear prerequisite message", async () => {
-    try {
-      await assertSupabaseReachable();
-      expect(process.env.SUPABASE_URL).toMatch(/127\.0\.0\.1|localhost/);
-    } catch (error) {
-      expect(error).toBeInstanceOf(Error);
-      expect((error as Error).message).toContain("supabase:start");
-    }
+  it.runIf(hasLocalSupabaseConfig())("reaches local Supabase when configured", async () => {
+    await assertSupabaseReachable();
+    expect(process.env.SUPABASE_URL).toMatch(/127\.0\.0\.1|localhost/);
+  });
+
+  it.runIf(!hasLocalSupabaseConfig())("throws a clear prerequisite message when local env is missing", async () => {
+    await expect(assertSupabaseReachable()).rejects.toThrow(/supabase:start/);
   });
 
   it("middleware returns 401 JSON for unauthenticated API mutation", async () => {

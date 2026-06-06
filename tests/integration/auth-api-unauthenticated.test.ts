@@ -49,6 +49,7 @@ describe("unauthenticated API boundaries", () => {
 
       expect(response.status).toBe(401);
       await expect(response.json()).resolves.toEqual({ error: "Not authenticated" });
+      expect(response.status).toBeLessThan(500);
     });
 
     it("POST projects/[id] redirects to sign-in without mutating when invoked directly", async () => {

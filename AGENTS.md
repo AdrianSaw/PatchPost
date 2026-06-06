@@ -55,7 +55,7 @@ Node **22.14+** (@.nvmrc). Husky + lint-staged: ESLint on `*.{ts,tsx,astro}`, Pr
 
 - `npm test` — Vitest integration suite (`vitest run`)
 - `npm run test:watch` — Vitest watch mode
-- **Prerequisite:** local Docker Supabase (`npm run supabase:start`) and `.env.local` with `SUPABASE_URL` + Publishable `SUPABASE_KEY` (see @.env.local.example). Tests fail fast with a one-line prerequisite message if Supabase is stopped or env is missing.
+- **Prerequisite:** local Docker Supabase (`npm run supabase:start`) and `.env.local` with `SUPABASE_URL` + Publishable `SUPABASE_KEY` (see @.env.local.example). Cross-owner suites skip when local env is missing; with local env configured, `assertSupabaseReachable()` fails fast if Docker is stopped. Reset local DB between long test runs: `npx supabase db reset`.
 - Integration tests live under `tests/integration/`; shared helpers under `tests/helpers/`. Uses real local Supabase + JWT sessions (no RLS mocks).
 - Playwright E2E and CI test gate are planned per @README_PatchPost_plan.md — not wired yet.
 
