@@ -311,23 +311,23 @@ No database migrations. Optional export of `wrapProviderError` is the only produ
 
 #### Automated
 
-- [x] 2.1 `npm test` passes (includes multi-line guardrail case with local env)
-- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.1 `npm test` passes (includes multi-line guardrail case with local env) — cfec1ca
+- [x] 2.2 Lint passes: `npm run lint` — cfec1ca
 
 #### Manual
 
-- [x] 2.3 Studio spot-check: generated content includes accepted token, excludes ignored token
+- [x] 2.3 Studio spot-check: generated content includes accepted token, excludes ignored token — cfec1ca
 
 ### Phase 3: Tagged live Gemini smoke
 
 #### Automated
 
-- [ ] 3.1 `npm test` passes without `GEMINI_API_KEY` (live suite skipped)
-- [ ] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 `npm test` passes without `GEMINI_API_KEY` (live suite skipped)
+- [x] 3.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 3.3 Optional: live smoke passes once with `GEMINI_API_KEY` set locally
+- [x] 3.3 Optional: live smoke passes once with `GEMINI_API_KEY` set locally
 
 ### Phase 4: Cookbook and test-plan closeout
 
