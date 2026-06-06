@@ -53,8 +53,15 @@ Node **22.14+** (@.nvmrc). Husky + lint-staged: ESLint on `*.{ts,tsx,astro}`, Pr
 
 ## Testing
 
-No `test` script in @package.json yet. Planned Playwright E2E per @README_PatchPost_plan.md — do not claim tests pass until the runner exists and CI runs it.
+- `npm test` — Vitest integration suite (`vitest run`)
+- `npm run test:watch` — Vitest watch mode
+- `npm run test:e2e` — Playwright e2e (`tests/e2e/`; Chromium via `playwright.config.ts`)
+- `npm run test:e2e:ui` — Playwright UI mode
+- **Prerequisite (Vitest + e2e):** local Docker Supabase (`npm run supabase:start`) and `.env.local` with `SUPABASE_URL` + Publishable `SUPABASE_KEY` (see @.env.local.example). Add `SUPABASE_SERVICE_ROLE_KEY` (Secret from `npx supabase status`) for integration tests and e2e global setup — invite-only Auth uses Admin API to provision users. Cross-owner and contract suites skip when local env is missing; with local env configured, `assertSupabaseReachable()` fails fast if Docker is stopped. Reset local DB between long test runs: `npx supabase db reset`.
+- Integration tests live under `tests/integration/`; unit tests under `tests/unit/`; e2e under `tests/e2e/` (`00-seed.spec.ts` harness, `main-flow.spec.ts` US-01 with mock AI). Shared helpers under `tests/helpers/` (including `guardrail-fixtures.ts` for generation oracles). Uses real local Supabase + JWT sessions (no RLS mocks). Contract suites: `projects-form-post-contracts`, `change-inputs-api-contracts`, `generation-runs-api-contracts` (includes mock-path guardrail regression), `drafts-api-contracts` (Risk #5 persistence + validation). Auth/RLS suites from Phase 1: `auth-api-unauthenticated`, `rls-cross-owner`, `projects-api-cross-owner`. Generation guardrails (Phase 3): unit suites `mock-provider`, `generation-prompts`, `generation-provider-factory`, `prompt-snapshot`, `wrap-provider-error`, `output-language`; optional live smoke `generation-live-smoke.test.ts` runs only when `RUN_LIVE_GEMINI_SMOKE=1` and `GEMINI_API_KEY` are set in `.env.local` (skipped by default — see @.env.local.example).
+- **E2e:** Playwright starts its own Astro dev server on `127.0.0.1:4322` — do not occupy that port manually. One-time: `npx playwright install chromium`. Recipe: @context/foundation/test-plan.md §6.3.
+- **CI:** every PR runs @.github/workflows/ci.yml — local Supabase start, `npm run typecheck`, full `npm test`, Playwright `npm run test:e2e`, `npm run lint`, then `npm run build` (build uses hosted `SUPABASE_*` GitHub secrets only). Local dev is unchanged — use `.env.local` with your own Docker Supabase.
 
 ## CI and commits
 
-Gate: @.github/workflows/ci.yml on `master` — `npm ci`, `npx astro sync`, `npm run lint`, `npm run build` (requires `SUPABASE_*` GitHub secrets). After `git init`, use commit prefixes from plan §23 (`feat:`, `fix:`, `docs:`, `ci:`, `test:`).
+Gate: @.github/workflows/ci.yml on `master` — `npm ci`, `npx astro sync`, local Supabase start, `npm run typecheck`, `npm test`, Playwright install + `npm run test:e2e`, `npm run lint`, `npm run build` (build step uses hosted `SUPABASE_*` GitHub secrets only). After `git init`, use commit prefixes from plan §23 (`feat:`, `fix:`, `docs:`, `ci:`, `test:`).

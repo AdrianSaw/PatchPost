@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-03
+> Last updated: 2026-06-06
 
 ## 1. Strategy
 
@@ -62,10 +62,10 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|-----------------|---------------|------------|--------|---------------|
-| 1 | Bootstrap runner and auth boundaries | Add Vitest + first integration tests for session auth and cross-owner access | #1, #2 | unit + integration | change opened | testing-bootstrap-auth-rls |
-| 2 | API handler contracts | Cover form POST mutation routes for auth, validation redirects, and persistence | #2, #5 | integration | not started | — |
-| 3 | Generation guardrails | Lock no-hallucination and mock-provider behavior for classification + generation | #3, #4 | unit + integration | not started | — |
-| 4 | Quality gates and north-star e2e | Wire tests into CI; optional Playwright for login → project → manual → generate → save | cross-cutting | gates + e2e | not started | — |
+| 1 | Bootstrap runner and auth boundaries | Add Vitest + first integration tests for session auth and cross-owner access | #1, #2 | unit + integration | complete | context/archive/2026-06-03-testing-bootstrap-auth-rls |
+| 2 | API handler contracts | Cover form POST mutation routes for auth, validation redirects, and persistence | #2, #5 | integration | complete | context/archive/2026-06-06-testing-api-handler-contracts |
+| 3 | Generation guardrails | Lock no-hallucination and mock-provider behavior for classification + generation | #3, #4 | unit + integration | complete | context/archive/2026-06-06-testing-generation-guardrails |
+| 4 | Quality gates and north-star e2e | Wire tests into CI; Playwright for login → project → manual → generate → save | cross-cutting | gates + e2e | complete | context/archive/2026-06-06-testing-ci-gates-e2e |
 
 ## 4. Stack
 
@@ -74,10 +74,10 @@ The classic test base for this project. AI-native tools (if any) carry a
 
 | Layer | Tool | Version | Notes |
 |-------|------|---------|-------|
-| unit + integration | Vitest | none yet | Bootstrap in §3 Phase 1; run in Node with SSR handler tests |
+| unit + integration | Vitest | ^3.2.4 | `npm test` / `npm run test:watch`; integration tests require local Supabase |
 | API / DB boundary | Supabase local + test client | CLI 2.x | Use `npm run supabase:start` profile; reset between integration files |
 | HTTP mocking | MSW (optional) | none yet | Prefer real handler + local Supabase over mocking internal modules |
-| e2e | Playwright | none yet | Planned in AGENTS.md; land in Phase 4 for US-01 path only |
+| e2e | Playwright | ^1.55.0 | `npm run test:e2e`; US-01 north-star in `tests/e2e/main-flow.spec.ts`; CI runs Chromium after Vitest |
 | accessibility | none | — | Out of scope until core auth/generation floor exists |
 
 **Stack grounding tools (current session):**
@@ -104,27 +104,219 @@ the relevant rollout phase ships.
 
 ### 6.1 Adding a unit test
 
-TBD — see §3 Phase 1.
+No dedicated unit-test files yet — Phase 1 rollout focused on auth/RLS **integration** tests (Risk #1–#2). When adding a unit test:
+
+1. Place pure-function tests under `tests/unit/` (see §6.5 for generation guardrail units).
+2. Run `npm test` — Vitest picks up `tests/**/*.test.ts`.
+3. Do **not** mock Supabase or RLS for auth boundaries; use integration tests in `tests/integration/` instead.
+
+Reference: `context/archive/2026-06-03-testing-bootstrap-auth-rls/` (Vitest bootstrap).
 
 ### 6.2 Adding an integration test
 
-TBD — see §3 Phase 1.
+Integration tests use **real local Supabase** (Docker via `npm run supabase:start`) and real JWT sessions — no internal module mocks for auth/RLS.
+
+**Prerequisites**
+
+1. `npm run supabase:start`
+2. Copy `.env.local.example` → `.env.local` with Publishable `SUPABASE_KEY` from CLI output
+3. `npm test`
+
+**Layout**
+
+| Path | Purpose |
+|------|---------|
+| `tests/setup.ts` | Loads `.env` + `.env.local`; `assertSupabaseReachable()` fails fast with one-line instructions |
+| `tests/helpers/supabase-session.ts` | `createTestUser()`, `signInAs()` — Admin API when `SUPABASE_SERVICE_ROLE_KEY` set (invite-only local) |
+| `tests/helpers/api-context.ts` | Build minimal Astro `APIContext` for handler imports |
+| `tests/helpers/json-api-context.ts` | JSON POST/PATCH with `Content-Type` + serialized body |
+| `tests/helpers/authenticated-api-context.ts` | Form POST with session cookies pre-applied |
+| `tests/helpers/seed-fixtures.ts` | `seedProject`, `seedChangeInput`, `seedDraftViaGeneration` |
+| `tests/helpers/redirect-assertions.ts` | Presence-only `?error=` and success redirect helpers |
+| `tests/helpers/middleware-request.ts` | Invoke `src/middleware.ts` without dev server |
+| `tests/integration/*.test.ts` | Integration suites |
+
+**Commands:** `npm test` (single run), `npm run test:watch`.
+
+**Existing suites (Risk #1–#2)**
+
+- `tests/integration/auth-api-unauthenticated.test.ts` — unauthenticated middleware matrix + handler guards
+- `tests/integration/rls-cross-owner.test.ts` — two-user RLS via services
+- `tests/integration/projects-api-cross-owner.test.ts` — cross-owner form POST on `POST /api/projects/[id]`
+- `tests/integration/harness-smoke.test.ts` — env + middleware smoke
+
+**Existing suites (Risk #2, #5 — handler contracts)**
+
+- `tests/integration/projects-form-post-contracts.test.ts` — owner form POST create/update/delete + validation redirects
+- `tests/integration/change-inputs-api-contracts.test.ts` — JSON create + 422 validation
+- `tests/integration/generation-runs-api-contracts.test.ts` — mock provider persistence + 422 validation
+- `tests/integration/drafts-api-contracts.test.ts` — PATCH persistence + 422 validation
+- `tests/integration/helpers-import.test.ts` — helper import smoke
+
+**Pattern:** `beforeAll` → `assertSupabaseReachable()` → `createTestUser()` × 2 → act as User B → assert `null`/empty/no row change (not HTTP 403).
+
+**Vitest env:** `vitest.config.ts` aliases `astro:env/server` to `tests/mocks/astro-env-server.ts` (reads `process.env.SUPABASE_*`). `tests/setup.ts` polyfills `WebSocket` via `ws` on Node versions below 22.
+
+**Skip policy:** Cross-owner suites use `describe.skipIf(!hasLocalSupabaseConfig())` when `.env.local` is missing or points at hosted Supabase; auth boundary tests still run. With local config but Docker stopped, `assertSupabaseReachable()` fails with the prerequisite message.
 
 ### 6.3 Adding an e2e test
 
-TBD — see §3 Phase 4.
+Browser wiring for the US-01 path (login → project → generate → draft history). E2e **complements** integration tests — it does not replace Risks #1–#5 handler/RLS coverage.
+
+**Prerequisites**
+
+1. `npm run supabase:start`
+2. `.env.local` with local `SUPABASE_URL`, Publishable `SUPABASE_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` (Secret from `npx supabase status`) — same as §6.2; global setup provisions invite-only users via Admin API
+3. One-time browser install: `npx playwright install chromium`
+4. Do **not** run a separate dev server on port **4322** — Playwright starts Astro via `playwright.config.ts` (`127.0.0.1:4322`)
+
+**Layout**
+
+| Path | Purpose |
+|------|---------|
+| `playwright.config.ts` | `webServer` runs `npm run dev:local`; `workers: 1`; `globalSetup` |
+| `tests/e2e/global-setup.ts` | Provisions e2e user; writes `tests/e2e/.auth/user.json` (gitignored) |
+| `tests/e2e/fixtures/auth.ts` | `signInThroughUi`, island hydration helpers, React field fills |
+| `tests/e2e/00-seed.spec.ts` | Harness smoke — sign-in only; run first when debugging stack |
+| `tests/e2e/main-flow.spec.ts` | US-01 product wiring — mock AI, drafts success banner |
+| `tests/e2e/E2E-RULES.md` | Agent-readable locator/wait/isolation rules for new specs |
+
+**Commands**
+
+- `npm run test:e2e` — both specs (seed runs first by filename)
+- `npm run test:e2e:ui` — Playwright UI mode
+- `npm run test:e2e -- tests/e2e/main-flow.spec.ts` — single spec
+
+**Mock AI (required for generate flow)**
+
+- Dev server (`import.meta.env.DEV`) shows **Use mock AI provider (dev only)** on `/app/projects/{id}/generate` — leave checked
+- Client sends `x-dev-mock-provider: 1` on `POST /api/projects/{id}/generation-runs`
+- `main-flow.spec.ts` asserts that header and a snippet containing `GUARDRAIL_ACCEPTED` from `tests/helpers/guardrail-fixtures.ts`
+
+**Recipe — add a second e2e spec**
+
+1. Add `tests/e2e/<name>.spec.ts`; reuse `signInThroughUi` / `fillReactField` from `fixtures/auth.ts`
+2. For fetch-based React islands (`GenerateForm`), call `waitForGenerateFormReady(page)` before interacting
+3. For native form POST islands (`ProjectForm`), use `getByRole` / `getByLabel` fills (no `#id` selectors)
+4. Keep assertions wiring-level — do not claim full regression of integration risks in the spec title
+5. Run `npm run lint` and `npm run test:e2e`
+
+**CI**
+
+- `.github/workflows/ci.yml` runs `npx playwright install --with-deps chromium` then `npm run test:e2e` after Vitest, using the same ephemeral local Supabase env
+
+**Anti-patterns**
+
+- Live Gemini or `AI_PROVIDER=mock` without dev header in e2e — use mock checkbox path only
+- `astro preview` for e2e mock header (prod-like; no dev checkbox unless configured)
+- Parallel Playwright workers against shared Supabase state
+- Reusing a stale manual dev server on port 4322 while running `npm run test:e2e`
+- Duplicating Admin API user provisioning inside spec files
+
+Reference: `context/archive/2026-06-06-testing-ci-gates-e2e/` (Rollout Phase 4).
 
 ### 6.4 Adding a test for a new API endpoint
 
-TBD — see §3 Phase 2 for form POST mutation pattern (auth + validation redirect + persistence).
+Use this recipe when adding integration coverage for a new mutation route (form POST or JSON). See `context/archive/2026-06-06-testing-api-handler-contracts/` for reference implementations.
+
+**Prerequisites**
+
+1. `npm run supabase:start`
+2. `.env.local` with local `SUPABASE_URL`, Publishable `SUPABASE_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` (Secret from `npx supabase status`) — required for invite-only local Auth (`[auth].enable_signup = false` in `supabase/config.toml`; `[auth.email].enable_signup = true` so Admin-created test users can sign in)
+3. `npm test`
+
+**Steps**
+
+1. **Pick the handler style**
+   - **Form POST + redirects:** `createAuthenticatedFormContext(session, { method: "POST", pathname, params, body: formData })` — capture `redirects[]`; assert `?error=` with `expectFormErrorRedirect` (presence only) or success path with `expectRedirectToProject`.
+   - **JSON POST/PATCH:** `createJsonApiContext(session, { pathname, params, body, method?, extraHeaders? })` — assert `response.status` and `await response.json()`; validation failures expect `422` and `{ error: string }`.
+
+2. **Provision data** — `beforeAll`: `assertSupabaseReachable()` → `vi.stubEnv("SUPABASE_URL"|"SUPABASE_KEY", …)` → `createTestUser()` → `seedProject` / `seedChangeInput` as needed. For generation routes, pass `x-dev-mock-provider: 1` in DEV.
+
+3. **Invoke handler** — import `POST`/`PATCH` from `src/pages/api/...` and call with `context` (no dev server).
+
+4. **Assert HTTP contract** — redirects or status/body per step 1.
+
+5. **Assert DB state** — read back via owner's `session.client` and existing `@/lib/services/*` getters (`getProjectById`, `listChangeInputsByProject`, etc.). Validation cases: row count or field unchanged.
+
+6. **File placement** — add `tests/integration/<feature>-api-contracts.test.ts`; wrap in `describe.skipIf(!hasLocalSupabaseConfig())` when the suite needs Docker.
+
+**Optional cleanup:** `createTestUser()` provisions real Auth users via Admin API; they accumulate in local Supabase across runs. Use `npx supabase db reset` when Auth storage grows noisy — no per-test teardown required for MVP harness.
+
+**Do not** duplicate unauthenticated middleware matrix tests (`auth-api-unauthenticated.test.ts`) or cross-owner RLS suites unless the new route introduces a new authorization shape.
 
 ### 6.5 Adding a test for generation output guardrails
 
-TBD — see §3 Phase 3 for manual-input-only output and mock-provider contract.
+Risks **#3** (output derivable from manual input on the mock path) and **#4** (mock vs live provider boundaries). Full mock-path #3 regression is required; live Gemini checks are optional and structural only.
+
+**Shared fixture** — `tests/helpers/guardrail-fixtures.ts`:
+
+| Export | Purpose |
+|--------|---------|
+| `GUARDRAIL_ACCEPTED` | Stable token on line 1 (`rifle-damage-10pct`) |
+| `GUARDRAIL_IGNORED` | Stable token on line 2 (`internal-only-xyz`) — must not appear in mock output |
+| `buildMultiLineGuardrailInput()` | Two-line `raw_content` builder; mock `firstChangeLine` classifies line 1 only |
+
+**Prerequisites**
+
+1. `npm run supabase:start`
+2. `.env.local` with local Supabase keys (see §6.2)
+3. `npm test`
+
+**Layers**
+
+| Layer | Path | When to use |
+|-------|------|-------------|
+| Unit | `tests/unit/*.test.ts` | Pure prompts, factory resolution, `wrapProviderError`, mock echo, snapshot parse, output language — no Supabase |
+| Integration (mock) | `tests/integration/generation-runs-api-contracts.test.ts` | Main #3 regression — full HTTP + DB workflow |
+| Integration (live, optional) | `tests/integration/generation-live-smoke.test.ts` | Tagged #4 structural smoke — **skipped by default** |
+
+**Recipe — mock-path guardrail (required for new output types)**
+
+1. Import `buildMultiLineGuardrailInput()` (or extend tokens if the output type needs a different oracle).
+2. `seedChangeInput(session, projectId, { raw_content: fixture.raw_content })`.
+3. POST `generation-runs` via `createJsonApiContext` with `x-dev-mock-provider: 1` in `extraHeaders`.
+4. Assert **201**; load persisted output via `getGeneratedOutputById`.
+5. Assert `content` **includes** `fixture.accepted` and **excludes** `fixture.ignored`.
+6. Assert response `classifiedItems[0].source` equals the first non-empty line of `raw_content`.
+7. Optional: `parsePromptSnapshot` on the run row shows `"provider":"mock"`.
+
+**Recipe — optional live Gemini smoke**
+
+1. Set in `.env.local` (never commit): `RUN_LIVE_GEMINI_SMOKE=1`, `GEMINI_API_KEY`, and **do not** set `AI_PROVIDER=mock` (see @.env.local.example).
+2. Run `npm test -- tests/integration/generation-live-smoke.test.ts` once to verify.
+3. **Leave `RUN_LIVE_GEMINI_SMOKE` commented out** for day-to-day runs — default `npm test` must stay green without live API cost.
+4. POST **without** `x-dev-mock-provider`; assert `classificationResultSchema` on `classifiedItems`; assert accepted token in a classification `source` field; assert `parsePromptSnapshot` shows `provider: "gemini"` (live changelog may paraphrase — do not require exact token in generated `content`).
+5. Do **not** assert ignored token is excluded on the live path.
+
+**Unit suites shipped (Phase 3)**
+
+- `mock-provider.test.ts` — first-line echo / classification shape
+- `generation-prompts.test.ts` — prompt boundaries
+- `generation-provider-factory.test.ts` — mock vs Gemini resolution
+- `prompt-snapshot.test.ts` — snapshot parse
+- `wrap-provider-error.test.ts` — provider error → workflow error mapping
+- `output-language.test.ts` — language instruction selection
+
+**Anti-patterns**
+
+- Snapshotting full LLM prose
+- Copying oracle strings verbatim from prompt implementation files
+- Running live Gemini in CI or default `npm test`
+- Test names or docs claiming live smoke proves full hallucination detection
+- Duplicating the full generation workflow in multiple integration files when extending output types — reuse the mock guardrail case pattern
+
+Reference: `context/archive/2026-06-06-testing-generation-guardrails/` (Rollout Phase 3).
 
 ### 6.6 Per-rollout-phase notes
 
-_(Filled in as phases complete.)_
+**Phase 1 — `context/archive/2026-06-03-testing-bootstrap-auth-rls` (complete):** Vitest + local Supabase harness; integration coverage for Risks #1 (cross-owner IDOR) and #2 (unauthenticated API mutation). Supporting extras: `ws` WebSocket polyfill (Node below 22), `mock-cookies.ts`, `astro-middleware.ts` mock. No Playwright, no CI test gate yet (test-plan Phase 4).
+
+**Phase 2 — `context/archive/2026-06-06-testing-api-handler-contracts` (complete):** Owner happy-path + validation contracts for all five mutation handlers (form + JSON); shared seed/redirect/json helpers; §6.4 cookbook. Invite-only local Auth: tests use Admin API via `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`. CI test gate still deferred (test-plan Phase 4).
+
+**Phase 3 — `context/archive/2026-06-06-testing-generation-guardrails` (complete):** Unit guardrails under `tests/unit/`; mock-path multi-line fixture regression in `generation-runs-api-contracts.test.ts`; optional live smoke in `generation-live-smoke.test.ts` gated on `RUN_LIVE_GEMINI_SMOKE=1` + `GEMINI_API_KEY`; shared `guardrail-fixtures.ts`; §6.5 cookbook. `wrapProviderError` exported for unit testing. CI test gate still deferred (test-plan Phase 4).
+
+**Phase 4 — `context/archive/2026-06-06-testing-ci-gates-e2e` (complete):** CI runs `npm run typecheck`, full Vitest + local Supabase, Playwright e2e (`00-seed.spec.ts` + `main-flow.spec.ts`), lint, and build. E2e uses dedicated dev server on `127.0.0.1:4322`, mock AI checkbox, and `x-dev-mock-provider: 1`; §6.3 cookbook.
 
 ## 7. What We Deliberately Don't Test
 

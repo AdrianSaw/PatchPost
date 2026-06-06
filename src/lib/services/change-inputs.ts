@@ -1,17 +1,7 @@
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
-import type { z } from "zod";
 import type { ChangeInput, CreateChangeInputInput, UpdateChangeInputInput } from "@/types";
 import { createChangeInputSchema, updateChangeInputSchema } from "@/types";
-
-function validationError(error: z.ZodError): PostgrestError {
-  return {
-    name: "ValidationError",
-    message: error.issues.map((issue) => issue.message).join("; "),
-    details: "",
-    hint: "",
-    code: "validation_error",
-  };
-}
+import { validationPostgrestError } from "@/lib/services/postgrest-error";
 
 export async function listChangeInputsByProject(supabase: SupabaseClient, projectId: string) {
   return supabase
@@ -35,7 +25,7 @@ export async function createChangeInput(
 ): Promise<{ data: ChangeInput | null; error: PostgrestError | null }> {
   const parsed = createChangeInputSchema.safeParse(input);
   if (!parsed.success) {
-    return { data: null, error: validationError(parsed.error) };
+    return { data: null, error: validationPostgrestError(parsed.error) };
   }
 
   return supabase
@@ -58,7 +48,7 @@ export async function updateChangeInput(
 ): Promise<{ data: ChangeInput | null; error: PostgrestError | null }> {
   const parsed = updateChangeInputSchema.safeParse(input);
   if (!parsed.success) {
-    return { data: null, error: validationError(parsed.error) };
+    return { data: null, error: validationPostgrestError(parsed.error) };
   }
 
   return supabase.from("change_inputs").update(parsed.data).eq("id", changeInputId).select().single();

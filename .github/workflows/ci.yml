@@ -9,6 +9,7 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -17,6 +18,38 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx astro sync
+
+      - name: Start local Supabase
+        run: npx supabase start
+
+      - name: Export Supabase env for tests
+        run: |
+          for i in $(seq 1 30); do
+            if npx supabase status -o json > /tmp/supabase-status.json 2>/dev/null; then
+              API_URL=$(jq -r '.API_URL' /tmp/supabase-status.json)
+              if [ -n "$API_URL" ] && [ "$API_URL" != "null" ]; then
+                echo "Supabase ready (attempt $i)"
+                break
+              fi
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "Supabase failed to become ready"
+              exit 1
+            fi
+            sleep 2
+          done
+          echo "SUPABASE_URL=$(jq -r '.API_URL' /tmp/supabase-status.json)" >> $GITHUB_ENV
+          echo "SUPABASE_KEY=$(jq -r '.ANON_KEY' /tmp/supabase-status.json)" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(jq -r '.SERVICE_ROLE_KEY' /tmp/supabase-status.json)" >> $GITHUB_ENV
+
+      - run: npm run typecheck
+      - run: npm test
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - run: npm run test:e2e
+
       - run: npm run lint
       - run: npm run build
         env:

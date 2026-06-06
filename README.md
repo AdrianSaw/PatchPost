@@ -55,6 +55,8 @@ npm run dev:local
 - `npm run lint` - Run ESLint with type-checked rules
 - `npm run lint:fix` - Auto-fix ESLint issues
 - `npm run format` - Run Prettier
+- `npm test` - Run Vitest integration tests (requires local Supabase — see [Testing](#testing))
+- `npm run test:watch` - Vitest watch mode
 
 ## Project Structure
 
@@ -231,9 +233,19 @@ Repository secrets required:
 
 Worker runtime secrets (`SUPABASE_*`) are set once via `wrangler secret put`; CI does not need to rotate them on each deploy.
 
+## Testing
+
+Auth and RLS integration tests use Vitest against **local Supabase**:
+
+1. `npm run supabase:start`
+2. Copy `.env.local.example` → `.env.local` and set the Publishable key from the CLI output
+3. `npm test`
+
+If Supabase is stopped or env is missing, integration suites skip locally with a clear prerequisite message. CI runs the full suite with Docker Supabase on every PR (see below). See `context/foundation/test-plan.md` §6 for cookbook patterns (populated as rollout phases land).
+
 ## CI
 
-GitHub Actions runs lint + build on every push and PR to `master` ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets for the build step.
+GitHub Actions runs typecheck, full Vitest (ephemeral local Supabase), Playwright e2e (`npm run test:e2e`), lint, and build on every push and PR to `master` ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). The test steps use keys from `npx supabase status`; configure hosted `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets for the build step only.
 
 ## License
 

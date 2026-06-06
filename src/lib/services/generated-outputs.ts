@@ -1,5 +1,4 @@
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
-import type { z } from "zod";
 import type {
   CreateGeneratedOutputInput,
   DefaultTone,
@@ -8,6 +7,7 @@ import type {
   UpdateGeneratedOutputInput,
 } from "@/types";
 import { createGeneratedOutputSchema, updateGeneratedOutputSchema } from "@/types";
+import { relationMismatchPostgrestError, validationPostgrestError } from "@/lib/services/postgrest-error";
 
 export interface ProjectDraftHistoryItem {
   draft: GeneratedOutputListRow;
@@ -29,26 +29,6 @@ interface DraftHistoryQueryRow extends GeneratedOutputListRow {
   generation_runs: { output_type: OutputType | null; tone: DefaultTone | null } | null;
 }
 
-function validationError(error: z.ZodError): PostgrestError {
-  return {
-    name: "ValidationError",
-    message: error.issues.map((issue) => issue.message).join("; "),
-    details: "",
-    hint: "",
-    code: "validation_error",
-  };
-}
-
-function relationMismatchError(field: string): PostgrestError {
-  return {
-    name: "ValidationError",
-    message: `${field} does not belong to project`,
-    details: "",
-    hint: "",
-    code: "validation_error",
-  };
-}
-
 async function assertGenerationRunBelongsToProject(
   supabase: SupabaseClient,
   generationRunId: string,
@@ -63,7 +43,7 @@ async function assertGenerationRunBelongsToProject(
     return error;
   }
   if (data?.project_id !== projectId) {
-    return relationMismatchError("generation_run_id");
+    return relationMismatchPostgrestError("generation_run_id");
   }
   return null;
 }
@@ -91,7 +71,7 @@ export async function listProjectDraftHistory(
     return { data: null, error, truncated: false };
   }
 
-  const items = (data as DraftHistoryQueryRow[] | null)?.map((row) => {
+  const items = (data as unknown as DraftHistoryQueryRow[] | null)?.map((row) => {
     const { generation_runs: run, ...draft } = row;
     return {
       draft,
@@ -121,7 +101,7 @@ export async function createGeneratedOutput(
 ): Promise<{ data: GeneratedOutput | null; error: PostgrestError | null }> {
   const parsed = createGeneratedOutputSchema.safeParse(input);
   if (!parsed.success) {
-    return { data: null, error: validationError(parsed.error) };
+    return { data: null, error: validationPostgrestError(parsed.error) };
   }
 
   if (parsed.data.generation_run_id) {
@@ -156,7 +136,7 @@ export async function updateGeneratedOutput(
 ): Promise<{ data: GeneratedOutput | null; error: PostgrestError | null }> {
   const parsed = updateGeneratedOutputSchema.safeParse(input);
   if (!parsed.success) {
-    return { data: null, error: validationError(parsed.error) };
+    return { data: null, error: validationPostgrestError(parsed.error) };
   }
 
   if (parsed.data.generation_run_id) {
@@ -169,7 +149,7 @@ export async function updateGeneratedOutput(
       return { data: null, error: outputError };
     }
     if (!output) {
-      return { data: null, error: relationMismatchError("generated_output_id") };
+      return { data: null, error: relationMismatchPostgrestError("generated_output_id") };
     }
     const fkError = await assertGenerationRunBelongsToProject(
       supabase,

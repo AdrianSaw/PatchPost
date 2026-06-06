@@ -137,6 +137,38 @@ async function callGeminiWithRetry(
   }
 }
 
+export function normalizeClassificationPayload(parsed: unknown): unknown {
+  if (!parsed || typeof parsed !== "object" || !("items" in parsed)) {
+    return parsed;
+  }
+
+  const payload = parsed as Record<string, unknown>;
+  const items = payload.items;
+  if (!Array.isArray(items)) {
+    return parsed;
+  }
+
+  return {
+    items: items.map((raw: unknown) => {
+      if (!raw || typeof raw !== "object") {
+        return raw;
+      }
+
+      const item = raw as Record<string, unknown>;
+      const source = typeof item.source === "string" ? item.source.trim() : "";
+      const reason = typeof item.reason === "string" ? item.reason.trim() : "";
+      const summary = typeof item.suggested_public_summary === "string" ? item.suggested_public_summary.trim() : "";
+
+      return {
+        ...item,
+        source,
+        reason,
+        suggested_public_summary: summary,
+      };
+    }),
+  };
+}
+
 function parseClassificationJson(text: string): ClassifyResult {
   let parsed: unknown;
   try {
@@ -145,7 +177,7 @@ function parseClassificationJson(text: string): ClassifyResult {
     throw new GenerationProviderError("Gemini classification response was not valid JSON", "invalid_response", error);
   }
 
-  const result = classificationResultSchema.safeParse(parsed);
+  const result = classificationResultSchema.safeParse(normalizeClassificationPayload(parsed));
   if (!result.success) {
     throw new GenerationProviderError(
       result.error.issues.map((issue) => issue.message).join("; "),

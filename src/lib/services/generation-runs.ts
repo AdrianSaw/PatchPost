@@ -1,27 +1,7 @@
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
-import type { z } from "zod";
 import type { CreateGenerationRunInput, GenerationRun, UpdateGenerationRunInput } from "@/types";
 import { createGenerationRunSchema, updateGenerationRunSchema } from "@/types";
-
-function validationError(error: z.ZodError): PostgrestError {
-  return {
-    name: "ValidationError",
-    message: error.issues.map((issue) => issue.message).join("; "),
-    details: "",
-    hint: "",
-    code: "validation_error",
-  };
-}
-
-function relationMismatchError(field: string): PostgrestError {
-  return {
-    name: "ValidationError",
-    message: `${field} does not belong to project`,
-    details: "",
-    hint: "",
-    code: "validation_error",
-  };
-}
+import { relationMismatchPostgrestError, validationPostgrestError } from "@/lib/services/postgrest-error";
 
 async function assertChangeInputBelongsToProject(
   supabase: SupabaseClient,
@@ -37,7 +17,7 @@ async function assertChangeInputBelongsToProject(
     return error;
   }
   if (data?.project_id !== projectId) {
-    return relationMismatchError("change_input_id");
+    return relationMismatchPostgrestError("change_input_id");
   }
   return null;
 }
@@ -64,7 +44,7 @@ export async function createGenerationRun(
 ): Promise<{ data: GenerationRun | null; error: PostgrestError | null }> {
   const parsed = createGenerationRunSchema.safeParse(input);
   if (!parsed.success) {
-    return { data: null, error: validationError(parsed.error) };
+    return { data: null, error: validationPostgrestError(parsed.error) };
   }
 
   if (parsed.data.change_input_id) {
@@ -100,7 +80,7 @@ export async function updateGenerationRun(
 ): Promise<{ data: GenerationRun | null; error: PostgrestError | null }> {
   const parsed = updateGenerationRunSchema.safeParse(input);
   if (!parsed.success) {
-    return { data: null, error: validationError(parsed.error) };
+    return { data: null, error: validationPostgrestError(parsed.error) };
   }
 
   if (parsed.data.change_input_id) {
@@ -113,7 +93,7 @@ export async function updateGenerationRun(
       return { data: null, error: runError };
     }
     if (!run) {
-      return { data: null, error: relationMismatchError("generation_run_id") };
+      return { data: null, error: relationMismatchPostgrestError("generation_run_id") };
     }
     const fkError = await assertChangeInputBelongsToProject(
       supabase,

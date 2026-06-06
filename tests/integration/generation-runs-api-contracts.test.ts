@@ -1,0 +1,130 @@
+import { beforeAll, describe, expect, it, vi } from "vitest";
+import { parsePromptSnapshot } from "@/lib/generation/prompt-snapshot";
+import { getGenerationRunById, listGenerationRunsByProject } from "@/lib/services/generation-runs";
+import { getGeneratedOutputById } from "@/lib/services/generated-outputs";
+import { POST as postGenerationRun } from "@/pages/api/projects/[id]/generation-runs";
+import { createJsonApiContext } from "../helpers/json-api-context";
+import { buildMultiLineGuardrailInput } from "../helpers/guardrail-fixtures";
+import { seedChangeInput, seedProject } from "../helpers/seed-fixtures";
+import { createTestUser, type TestUserSession } from "../helpers/supabase-session";
+import { assertSupabaseReachable, hasLocalSupabaseConfig } from "../setup";
+
+describe.skipIf(!hasLocalSupabaseConfig())("generation-runs API contracts", () => {
+  let session: TestUserSession;
+  let projectId: string;
+  let changeInputId: string;
+
+  beforeAll(async () => {
+    await assertSupabaseReachable();
+    vi.stubEnv("SUPABASE_URL", process.env.SUPABASE_URL ?? "");
+    vi.stubEnv("SUPABASE_KEY", process.env.SUPABASE_KEY ?? "");
+
+    session = await createTestUser("generation-runs-contracts");
+    const project = await seedProject(session, { name: "Generation contract project" });
+    projectId = project.id;
+    const changeInput = await seedChangeInput(session, projectId, {
+      raw_content: "Balance patch: reduced rifle damage by 10%.",
+    });
+    changeInputId = changeInput.id;
+  });
+
+  it("creates generation run and output with mock provider header", async () => {
+    const { context } = createJsonApiContext(session, {
+      pathname: `/api/projects/${projectId}/generation-runs`,
+      params: { id: projectId },
+      body: { change_input_id: changeInputId, output_type: "changelog" },
+      extraHeaders: { "x-dev-mock-provider": "1" },
+    });
+
+    const response = await postGenerationRun(context);
+    expect(response.status).toBe(201);
+
+    const payload = (await response.json()) as {
+      generationRun: { id: string };
+      generatedOutput: { id: string };
+    };
+    expect(payload.generationRun.id).toBeTruthy();
+    expect(payload.generatedOutput.id).toBeTruthy();
+
+    const { data: run } = await getGenerationRunById(session.client, payload.generationRun.id);
+    expect(run?.project_id).toBe(projectId);
+
+    const { data: output } = await getGeneratedOutputById(session.client, payload.generatedOutput.id);
+    expect(output?.generation_run_id).toBe(payload.generationRun.id);
+  });
+
+  it("returns 422 for invalid output_type without new generation runs", async () => {
+    const { data: beforeList } = await listGenerationRunsByProject(session.client, projectId);
+    const countBefore = beforeList?.length ?? 0;
+
+    const { context } = createJsonApiContext(session, {
+      pathname: `/api/projects/${projectId}/generation-runs`,
+      params: { id: projectId },
+      body: { change_input_id: changeInputId, output_type: "not_a_valid_type" },
+      extraHeaders: { "x-dev-mock-provider": "1" },
+    });
+
+    const response = await postGenerationRun(context);
+    expect(response.status).toBe(422);
+    await expect(response.json()).resolves.toEqual(
+      expect.objectContaining({ error: expect.stringMatching(/.+/) as string }),
+    );
+
+    const { data: afterList } = await listGenerationRunsByProject(session.client, projectId);
+    expect(afterList?.length ?? 0).toBe(countBefore);
+  });
+
+  it("returns 422 for malformed change_input_id without new generation runs", async () => {
+    const { data: beforeList } = await listGenerationRunsByProject(session.client, projectId);
+    const countBefore = beforeList?.length ?? 0;
+
+    const { context } = createJsonApiContext(session, {
+      pathname: `/api/projects/${projectId}/generation-runs`,
+      params: { id: projectId },
+      body: { change_input_id: "not-a-uuid", output_type: "changelog" },
+      extraHeaders: { "x-dev-mock-provider": "1" },
+    });
+
+    const response = await postGenerationRun(context);
+    expect(response.status).toBe(422);
+    await expect(response.json()).resolves.toEqual(
+      expect.objectContaining({ error: expect.stringMatching(/.+/) as string }),
+    );
+
+    const { data: afterList } = await listGenerationRunsByProject(session.client, projectId);
+    expect(afterList?.length ?? 0).toBe(countBefore);
+  });
+
+  it("persists mock output with accepted token and without ignored token from multi-line input", async () => {
+    const { raw_content, accepted, ignored } = buildMultiLineGuardrailInput();
+    const firstLine = raw_content.split("\n")[0]?.trim() ?? raw_content;
+    const guardrailInput = await seedChangeInput(session, projectId, { raw_content });
+
+    const { context } = createJsonApiContext(session, {
+      pathname: `/api/projects/${projectId}/generation-runs`,
+      params: { id: projectId },
+      body: { change_input_id: guardrailInput.id, output_type: "changelog" },
+      extraHeaders: { "x-dev-mock-provider": "1" },
+    });
+
+    const response = await postGenerationRun(context);
+    expect(response.status).toBe(201);
+
+    const payload = (await response.json()) as {
+      generationRun: { id: string };
+      generatedOutput: { id: string };
+      classifiedItems: { source: string }[];
+    };
+
+    expect(payload.classifiedItems[0]?.source).toBe(firstLine);
+
+    const { data: output } = await getGeneratedOutputById(session.client, payload.generatedOutput.id);
+    expect(output?.content).toContain(accepted);
+    expect(output?.content).not.toContain(ignored);
+
+    const { data: run } = await getGenerationRunById(session.client, payload.generationRun.id);
+    const snapshot = parsePromptSnapshot(run?.prompt_snapshot);
+    expect(snapshot?.classifiedItems[0]?.source).toBe(firstLine);
+    expect(run?.prompt_snapshot).toContain('"provider":"mock"');
+  });
+});
