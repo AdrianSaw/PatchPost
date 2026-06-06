@@ -142,13 +142,14 @@ function normalizeClassificationPayload(parsed: unknown): unknown {
     return parsed;
   }
 
-  const items = (parsed as { items: unknown }).items;
+  const payload = parsed as Record<string, unknown>;
+  const items = payload.items;
   if (!Array.isArray(items)) {
     return parsed;
   }
 
   return {
-    items: items.map((raw) => {
+    items: items.map((raw: unknown) => {
       if (!raw || typeof raw !== "object") {
         return raw;
       }
@@ -156,8 +157,7 @@ function normalizeClassificationPayload(parsed: unknown): unknown {
       const item = raw as Record<string, unknown>;
       const source = typeof item.source === "string" ? item.source.trim() : "";
       const reason = typeof item.reason === "string" ? item.reason.trim() : "";
-      const summary =
-        typeof item.suggested_public_summary === "string" ? item.suggested_public_summary.trim() : "";
+      const summary = typeof item.suggested_public_summary === "string" ? item.suggested_public_summary.trim() : "";
 
       return {
         ...item,

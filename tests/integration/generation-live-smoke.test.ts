@@ -61,9 +61,7 @@ describe.skipIf(!shouldRunLiveGeminiSmoke())("generation live Gemini smoke (opti
       return;
     }
     expect(parsedClassification.data.items.length).toBeGreaterThan(0);
-    expect(
-      parsedClassification.data.items.some((item) => item.source.includes(fixture.accepted)),
-    ).toBe(true);
+    expect(parsedClassification.data.items.some((item) => item.source.includes(fixture.accepted))).toBe(true);
 
     const { data: output } = await getGeneratedOutputById(session.client, payload.generatedOutput.id);
     expect(output?.content.trim().length).toBeGreaterThan(0);

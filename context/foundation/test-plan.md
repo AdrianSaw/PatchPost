@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-06
+> Last updated: 2026-05-27
 
 ## 1. Strategy
 
@@ -64,7 +64,7 @@ orchestrator updates Status as artifacts appear on disk.
 |---|------------|-----------------|---------------|------------|--------|---------------|
 | 1 | Bootstrap runner and auth boundaries | Add Vitest + first integration tests for session auth and cross-owner access | #1, #2 | unit + integration | complete | context/changes/testing-bootstrap-auth-rls |
 | 2 | API handler contracts | Cover form POST mutation routes for auth, validation redirects, and persistence | #2, #5 | integration | complete | context/archive/2026-06-06-testing-api-handler-contracts |
-| 3 | Generation guardrails | Lock no-hallucination and mock-provider behavior for classification + generation | #3, #4 | unit + integration | planned | context/changes/testing-generation-guardrails |
+| 3 | Generation guardrails | Lock no-hallucination and mock-provider behavior for classification + generation | #3, #4 | unit + integration | complete | context/changes/testing-generation-guardrails |
 | 4 | Quality gates and north-star e2e | Wire tests into CI; optional Playwright for login → project → manual → generate → save | cross-cutting | gates + e2e | not started | — |
 
 ## 4. Stack
@@ -106,7 +106,7 @@ the relevant rollout phase ships.
 
 No dedicated unit-test files yet — Phase 1 rollout focused on auth/RLS **integration** tests (Risk #1–#2). When adding a unit test:
 
-1. Place pure-function tests next to the module or under `tests/unit/` (convention TBD in Phase 3 generation guardrails).
+1. Place pure-function tests under `tests/unit/` (see §6.5 for generation guardrail units).
 2. Run `npm test` — Vitest picks up `tests/**/*.test.ts`.
 3. Do **not** mock Supabase or RLS for auth boundaries; use integration tests in `tests/integration/` instead.
 
@@ -195,13 +195,74 @@ Use this recipe when adding integration coverage for a new mutation route (form 
 
 ### 6.5 Adding a test for generation output guardrails
 
-TBD — see §3 Phase 3 for manual-input-only output and mock-provider contract.
+Risks **#3** (output derivable from manual input on the mock path) and **#4** (mock vs live provider boundaries). Full mock-path #3 regression is required; live Gemini checks are optional and structural only.
+
+**Shared fixture** — `tests/helpers/guardrail-fixtures.ts`:
+
+| Export | Purpose |
+|--------|---------|
+| `GUARDRAIL_ACCEPTED` | Stable token on line 1 (`rifle-damage-10pct`) |
+| `GUARDRAIL_IGNORED` | Stable token on line 2 (`internal-only-xyz`) — must not appear in mock output |
+| `buildMultiLineGuardrailInput()` | Two-line `raw_content` builder; mock `firstChangeLine` classifies line 1 only |
+
+**Prerequisites**
+
+1. `npm run supabase:start`
+2. `.env.local` with local Supabase keys (see §6.2)
+3. `npm test`
+
+**Layers**
+
+| Layer | Path | When to use |
+|-------|------|-------------|
+| Unit | `tests/unit/*.test.ts` | Pure prompts, factory resolution, `wrapProviderError`, mock echo, snapshot parse, output language — no Supabase |
+| Integration (mock) | `tests/integration/generation-runs-api-contracts.test.ts` | Main #3 regression — full HTTP + DB workflow |
+| Integration (live, optional) | `tests/integration/generation-live-smoke.test.ts` | Tagged #4 structural smoke — **skipped by default** |
+
+**Recipe — mock-path guardrail (required for new output types)**
+
+1. Import `buildMultiLineGuardrailInput()` (or extend tokens if the output type needs a different oracle).
+2. `seedChangeInput(session, projectId, { raw_content: fixture.raw_content })`.
+3. POST `generation-runs` via `createJsonApiContext` with `x-dev-mock-provider: 1` in `extraHeaders`.
+4. Assert **201**; load persisted output via `getGeneratedOutputById`.
+5. Assert `content` **includes** `fixture.accepted` and **excludes** `fixture.ignored`.
+6. Assert response `classifiedItems[0].source` equals the first non-empty line of `raw_content`.
+7. Optional: `parsePromptSnapshot` on the run row shows `"provider":"mock"`.
+
+**Recipe — optional live Gemini smoke**
+
+1. Set in `.env.local` (never commit): `RUN_LIVE_GEMINI_SMOKE=1` and `GEMINI_API_KEY` (see @.env.local.example).
+2. Run `npm test -- tests/integration/generation-live-smoke.test.ts` once to verify.
+3. **Leave `RUN_LIVE_GEMINI_SMOKE` commented out** for day-to-day runs — default `npm test` must stay green without live API cost.
+4. POST **without** `x-dev-mock-provider`; assert `classificationResultSchema` on `classifiedItems`; assert accepted token appears in a classification `source` field (live changelog may paraphrase — do not require exact token in generated `content`).
+5. Do **not** assert ignored token is excluded on the live path.
+
+**Unit suites shipped (Phase 3)**
+
+- `mock-provider.test.ts` — first-line echo / classification shape
+- `generation-prompts.test.ts` — prompt boundaries
+- `generation-provider-factory.test.ts` — mock vs Gemini resolution
+- `prompt-snapshot.test.ts` — snapshot parse
+- `wrap-provider-error.test.ts` — provider error → workflow error mapping
+- `output-language.test.ts` — language instruction selection
+
+**Anti-patterns**
+
+- Snapshotting full LLM prose
+- Copying oracle strings verbatim from prompt implementation files
+- Running live Gemini in CI or default `npm test`
+- Test names or docs claiming live smoke proves full hallucination detection
+- Duplicating the full generation workflow in multiple integration files when extending output types — reuse the mock guardrail case pattern
+
+Reference: `context/changes/testing-generation-guardrails/` (Rollout Phase 3).
 
 ### 6.6 Per-rollout-phase notes
 
 **Phase 1 — `context/archive/2026-06-03-testing-bootstrap-auth-rls` (complete):** Vitest + local Supabase harness; integration coverage for Risks #1 (cross-owner IDOR) and #2 (unauthenticated API mutation). Supporting extras: `ws` WebSocket polyfill (Node below 22), `mock-cookies.ts`, `astro-middleware.ts` mock. No Playwright, no CI test gate yet (test-plan Phase 4).
 
 **Phase 2 — `context/archive/2026-06-06-testing-api-handler-contracts` (complete):** Owner happy-path + validation contracts for all five mutation handlers (form + JSON); shared seed/redirect/json helpers; §6.4 cookbook. Invite-only local Auth: tests use Admin API via `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`. CI test gate still deferred (test-plan Phase 4).
+
+**Phase 3 — `context/changes/testing-generation-guardrails` (complete):** Unit guardrails under `tests/unit/`; mock-path multi-line fixture regression in `generation-runs-api-contracts.test.ts`; optional live smoke in `generation-live-smoke.test.ts` gated on `RUN_LIVE_GEMINI_SMOKE=1` + `GEMINI_API_KEY`; shared `guardrail-fixtures.ts`; §6.5 cookbook. `wrapProviderError` exported for unit testing. CI test gate still deferred (test-plan Phase 4).
 
 ## 7. What We Deliberately Don't Test
 

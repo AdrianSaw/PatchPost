@@ -333,9 +333,9 @@ No database migrations. Optional export of `wrapProviderError` is the only produ
 
 #### Automated
 
-- [ ] 4.1 Full suite + lint + build pass: `npm test`, `npm run lint`, `npm run build`
-- [ ] 4.2 §6.5 and §3 Phase 3 status updated in test-plan
+- [x] 4.1 Full suite + lint + build pass: `npm test`, `npm run lint`, `npm run build`
+- [x] 4.2 §6.5 and §3 Phase 3 status updated in test-plan
 
 #### Manual
 
-- [ ] 4.3 §6.5 recipe matches helper and file names in repo
+- [x] 4.3 §6.5 recipe matches helper and file names in repo
