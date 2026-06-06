@@ -1,7 +1,7 @@
 ---
 change_id: testing-api-handler-contracts
 title: Testing api handler contracts
-status: planned
+status: implementing
 created: 2026-06-06
 updated: 2026-06-06
 archived_at: null
