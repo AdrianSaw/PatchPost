@@ -71,4 +71,25 @@ describe.skipIf(!hasLocalSupabaseConfig())("generation-runs API contracts", () =
     const { data: afterList } = await listGenerationRunsByProject(session.client, projectId);
     expect(afterList?.length ?? 0).toBe(countBefore);
   });
+
+  it("returns 422 for malformed change_input_id without new generation runs", async () => {
+    const { data: beforeList } = await listGenerationRunsByProject(session.client, projectId);
+    const countBefore = beforeList?.length ?? 0;
+
+    const { context } = createJsonApiContext(session, {
+      pathname: `/api/projects/${projectId}/generation-runs`,
+      params: { id: projectId },
+      body: { change_input_id: "not-a-uuid", output_type: "changelog" },
+      extraHeaders: { "x-dev-mock-provider": "1" },
+    });
+
+    const response = await postGenerationRun(context);
+    expect(response.status).toBe(422);
+    await expect(response.json()).resolves.toEqual(
+      expect.objectContaining({ error: expect.stringMatching(/.+/) as string }),
+    );
+
+    const { data: afterList } = await listGenerationRunsByProject(session.client, projectId);
+    expect(afterList?.length ?? 0).toBe(countBefore);
+  });
 });

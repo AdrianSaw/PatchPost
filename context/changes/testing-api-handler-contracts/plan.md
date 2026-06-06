@@ -151,6 +151,14 @@ Use `FormData`, `createApiContext({ cookieHeader: session.cookieHeader, body: fo
 
 **Contract**: No handler changes; optional one-line comment linking to Phase 1 false-success behavior.
 
+#### 3. Auth support addendum (discovered during implementation)
+
+**Files**: `tests/helpers/supabase-session.ts`, `supabase/config.toml`, `.env.local.example`
+
+**Intent**: Enable contract suites under invite-only local Auth without handler changes.
+
+**Contract**: `createTestUser()` uses Admin API when `SUPABASE_SERVICE_ROLE_KEY` is set in `.env.local`; falls back to public `signUp` otherwise. Local `supabase/config.toml` sets `[auth.email] enable_signup = true` while global `[auth].enable_signup = false` so Admin-created users can sign in with email/password. Document service role key in `.env.local.example` and test-plan §6.4.
+
 ### Success Criteria:
 
 #### Automated Verification:

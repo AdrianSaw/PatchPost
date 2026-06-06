@@ -2,6 +2,9 @@ import path from "node:path";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  define: {
+    "import.meta.env.DEV": JSON.stringify(true),
+  },
   test: {
     environment: "node",
     include: ["tests/**/*.test.ts"],

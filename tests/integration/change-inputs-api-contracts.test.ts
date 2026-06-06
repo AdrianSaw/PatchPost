@@ -56,4 +56,24 @@ describe.skipIf(!hasLocalSupabaseConfig())("change-inputs API contracts", () => 
     const { data: afterList } = await listChangeInputsByProject(session.client, projectId);
     expect(afterList?.length ?? 0).toBe(countBefore);
   });
+
+  it("returns 422 when raw_content is missing without creating a row", async () => {
+    const { data: beforeList } = await listChangeInputsByProject(session.client, projectId);
+    const countBefore = beforeList?.length ?? 0;
+
+    const { context } = createJsonApiContext(session, {
+      pathname: `/api/projects/${projectId}/change-inputs`,
+      params: { id: projectId },
+      body: { title: "Patch notes only" },
+    });
+
+    const response = await postChangeInput(context);
+    expect(response.status).toBe(422);
+    await expect(response.json()).resolves.toEqual(
+      expect.objectContaining({ error: expect.stringMatching(/.+/) as string }),
+    );
+
+    const { data: afterList } = await listChangeInputsByProject(session.client, projectId);
+    expect(afterList?.length ?? 0).toBe(countBefore);
+  });
 });

@@ -7,7 +7,7 @@ if (typeof globalThis.WebSocket === "undefined") {
 }
 
 export const SUPABASE_PREREQUISITE_MESSAGE =
-  "Integration tests require local Supabase. Run: npm run supabase:start — then copy .env.local.example → .env.local with the Publishable key.";
+  "Integration tests require local Supabase. Run: npm run supabase:start — then copy .env.local.example → .env.local with the Publishable key and SUPABASE_SERVICE_ROLE_KEY (Secret from npx supabase status; required for invite-only local Auth).";
 
 function loadEnvFile(filePath: string, override = false): void {
   if (!existsSync(filePath)) {
@@ -44,6 +44,8 @@ loadEnvFile(resolve(process.cwd(), ".env.local"), true);
 function isLocalSupabaseUrl(url: string): boolean {
   return url.includes("127.0.0.1") || url.includes("localhost");
 }
+
+export { isLocalSupabaseUrl };
 
 function missingSupabaseEnv(): boolean {
   const url = process.env.SUPABASE_URL;

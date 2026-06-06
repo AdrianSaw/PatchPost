@@ -2,6 +2,7 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
 import { cookieHeaderFromStore } from "./mock-cookies";
+import { isLocalSupabaseUrl } from "../setup";
 
 export interface TestUserSession {
   email: string;
@@ -29,6 +30,11 @@ async function provisionAuthUser(
 ): Promise<void> {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (serviceRoleKey) {
+    if (!isLocalSupabaseUrl(url)) {
+      throw new Error(
+        "SUPABASE_SERVICE_ROLE_KEY is set but SUPABASE_URL is not local. Refusing Admin API calls against a remote project.",
+      );
+    }
     const admin = createSupabaseClient(url, serviceRoleKey, {
       auth: { autoRefreshToken: false, persistSession: false },
     });

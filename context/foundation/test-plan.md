@@ -170,7 +170,7 @@ Use this recipe when adding integration coverage for a new mutation route (form 
 **Prerequisites**
 
 1. `npm run supabase:start`
-2. `.env.local` with local `SUPABASE_URL`, Publishable `SUPABASE_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` (Secret from `npx supabase status`) — required for invite-only local Auth (`enable_signup = false`)
+2. `.env.local` with local `SUPABASE_URL`, Publishable `SUPABASE_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` (Secret from `npx supabase status`) — required for invite-only local Auth (`[auth].enable_signup = false` in `supabase/config.toml`; `[auth.email].enable_signup = true` so Admin-created test users can sign in)
 3. `npm test`
 
 **Steps**
@@ -188,6 +188,8 @@ Use this recipe when adding integration coverage for a new mutation route (form 
 5. **Assert DB state** — read back via owner's `session.client` and existing `@/lib/services/*` getters (`getProjectById`, `listChangeInputsByProject`, etc.). Validation cases: row count or field unchanged.
 
 6. **File placement** — add `tests/integration/<feature>-api-contracts.test.ts`; wrap in `describe.skipIf(!hasLocalSupabaseConfig())` when the suite needs Docker.
+
+**Optional cleanup:** `createTestUser()` provisions real Auth users via Admin API; they accumulate in local Supabase across runs. Use `npx supabase db reset` when Auth storage grows noisy — no per-test teardown required for MVP harness.
 
 **Do not** duplicate unauthenticated middleware matrix tests (`auth-api-unauthenticated.test.ts`) or cross-owner RLS suites unless the new route introduces a new authorization shape.
 
