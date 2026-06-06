@@ -3,7 +3,7 @@ change_id: testing-ci-gates-e2e
 title: Testing CI gates and e2e
 status: implementing
 created: 2026-06-06
-updated: 2026-06-06
+updated: 2026-05-27
 archived_at: null
 ---
 
@@ -16,3 +16,5 @@ Planning decisions (2026-06-06): CI Strategy B (Supabase in GHA); Playwright boo
 **Phase 2 (2026-05-27):** Fixed all `astro check` errors; re-enabled `npm run typecheck` in CI before Vitest. CI green on PR #9.
 
 **Phase 3 (2026-06-06):** Playwright bootstrap complete — seed e2e green; global setup fails fast with `SUPABASE_PREREQUISITE_MESSAGE` when Supabase is down.
+
+**Phase 4 (2026-05-27):** North-star US-01 e2e (`main-flow.spec.ts`) with mock AI header; dedicated e2e dev server on 127.0.0.1:4322; island hydration helpers in auth fixture.
