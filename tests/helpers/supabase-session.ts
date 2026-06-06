@@ -1,3 +1,4 @@
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
 import { cookieHeaderFromStore } from "./mock-cookies";
@@ -20,7 +21,35 @@ function requireSupabaseConfig(): { url: string; key: string } {
   return { url, key };
 }
 
-/** Provision a unique auth user via the public Auth API (local Supabase only). */
+async function provisionAuthUser(
+  url: string,
+  email: string,
+  password: string,
+  publicClient: SupabaseClient,
+): Promise<void> {
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (serviceRoleKey) {
+    const admin = createSupabaseClient(url, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+    const { error } = await admin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+    });
+    if (error) {
+      throw error;
+    }
+    return;
+  }
+
+  const { error: signUpError } = await publicClient.auth.signUp({ email, password });
+  if (signUpError) {
+    throw signUpError;
+  }
+}
+
+/** Provision a unique auth user (Admin API when signup is disabled, else public signUp). */
 export async function createTestUser(label: string): Promise<TestUserSession> {
   const email = `patchpost-test-${label}-${Date.now()}@example.com`;
   const password = `Test_${crypto.randomUUID()}`;
@@ -50,10 +79,7 @@ export async function signInAs(
   });
 
   if (options?.signUpFirst) {
-    const { error: signUpError } = await client.auth.signUp({ email, password });
-    if (signUpError) {
-      throw signUpError;
-    }
+    await provisionAuthUser(url, email, password, client);
   }
 
   const { data, error } = await client.auth.signInWithPassword({ email, password });

@@ -326,12 +326,12 @@ No database migrations. Requires F-02 schema from existing `supabase/migrations/
 
 #### Automated
 
-- [ ] 2.1 `npm test` passes (includes `projects-form-post-contracts.test.ts`)
-- [ ] 2.2 Lint passes: `npm run lint`
+- [x] 2.1 `npm test` passes (includes `projects-form-post-contracts.test.ts`)
+- [x] 2.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.3 Invalid create redirect includes `?error=` when run locally
+- [x] 2.3 Invalid create redirect includes `?error=` when run locally
 
 ### Phase 3: JSON API route contracts
 
