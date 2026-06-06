@@ -315,12 +315,12 @@ No database migrations. Requires F-02 schema from existing `supabase/migrations/
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint`
-- [x] 1.2 Existing suites still pass: `npm test`
+- [x] 1.1 Lint passes: `npm run lint` — 368d045
+- [x] 1.2 Existing suites still pass: `npm test` — 368d045
 
 #### Manual
 
-- [x] 1.3 Helpers import cleanly from a scratch integration test import
+- [x] 1.3 Helpers import cleanly from a scratch integration test import — 368d045
 
 ### Phase 2: Form POST route contracts
 
