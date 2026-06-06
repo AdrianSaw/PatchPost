@@ -1,10 +1,10 @@
 ---
 change_id: testing-api-handler-contracts
 title: Testing api handler contracts
-status: impl_reviewed
+status: archived
 created: 2026-06-06
 updated: 2026-06-06
-archived_at: null
+archived_at: 2026-06-06T14:24:04Z
 ---
 
 ## Notes
