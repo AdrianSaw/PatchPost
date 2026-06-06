@@ -62,7 +62,7 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|-----------------|---------------|------------|--------|---------------|
-| 1 | Bootstrap runner and auth boundaries | Add Vitest + first integration tests for session auth and cross-owner access | #1, #2 | unit + integration | change opened | testing-bootstrap-auth-rls |
+| 1 | Bootstrap runner and auth boundaries | Add Vitest + first integration tests for session auth and cross-owner access | #1, #2 | unit + integration | researched | testing-bootstrap-auth-rls |
 | 2 | API handler contracts | Cover form POST mutation routes for auth, validation redirects, and persistence | #2, #5 | integration | not started | — |
 | 3 | Generation guardrails | Lock no-hallucination and mock-provider behavior for classification + generation | #3, #4 | unit + integration | not started | — |
 | 4 | Quality gates and north-star e2e | Wire tests into CI; optional Playwright for login → project → manual → generate → save | cross-cutting | gates + e2e | not started | — |
