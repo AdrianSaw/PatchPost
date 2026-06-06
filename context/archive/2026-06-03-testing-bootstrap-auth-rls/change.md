@@ -1,10 +1,10 @@
 ---
 change_id: testing-bootstrap-auth-rls
 title: Bootstrap runner and auth boundaries
-status: impl_reviewed
+status: archived
 created: 2026-06-03
-updated: 2026-05-27
-archived_at: null
+updated: 2026-06-06
+archived_at: 2026-06-06T13:11:30Z
 ---
 
 ## Notes
