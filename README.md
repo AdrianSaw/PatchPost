@@ -55,6 +55,8 @@ npm run dev:local
 - `npm run lint` - Run ESLint with type-checked rules
 - `npm run lint:fix` - Auto-fix ESLint issues
 - `npm run format` - Run Prettier
+- `npm test` - Run Vitest integration tests (requires local Supabase — see [Testing](#testing))
+- `npm run test:watch` - Vitest watch mode
 
 ## Project Structure
 
@@ -230,6 +232,16 @@ Repository secrets required:
 | `CLOUDFLARE_ACCOUNT_ID` | Wrangler account binding (see `account_id` in `wrangler.jsonc`) |
 
 Worker runtime secrets (`SUPABASE_*`) are set once via `wrangler secret put`; CI does not need to rotate them on each deploy.
+
+## Testing
+
+Auth and RLS integration tests use Vitest against **local Supabase** (not CI yet):
+
+1. `npm run supabase:start`
+2. Copy `.env.local.example` → `.env.local` and set the Publishable key from the CLI output
+3. `npm test`
+
+If Supabase is stopped or env is missing, tests print a clear prerequisite message. See `context/foundation/test-plan.md` §6 for cookbook patterns (populated as rollout phases land).
 
 ## CI
 
