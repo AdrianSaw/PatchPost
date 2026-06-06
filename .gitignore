@@ -30,7 +30,9 @@ pnpm-debug.log*
 .idea/
 
 # Cursor IDE (course tooling — do not commit)
-.cursor/
+.cursor/*
+!.cursor/hooks.json
+!.cursor/hooks/
 .cursor/skills/
 .cursor/prompts/
 .cursor/rules/
