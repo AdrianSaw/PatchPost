@@ -27,7 +27,7 @@ Phase 2 deferred output-text assertions. Today:
 
 - `tests/unit/` holds fast guardrail tests (mock echo, prompts, factory, snapshot parse, error wrap).
 - Integration test proves multi-line fixture: **accepted token in** persisted `content`, **ignored token out**; classification `source` matches first line only.
-- `tests/integration/generation-live-smoke.test.ts` runs only when `GEMINI_API_KEY` is set; asserts schema, non-empty classified items, tagged token substring — **not** full hallucination detection.
+- `tests/integration/generation-live-smoke.test.ts` runs only when `RUN_LIVE_GEMINI_SMOKE=1`, `GEMINI_API_KEY`, local Supabase, and `AI_PROVIDER` is not `mock`; asserts schema, non-empty classified items, fixture token in classification `source`, snapshot `provider: "gemini"` — **not** full hallucination detection.
 - `context/foundation/test-plan.md` §6.5 cookbook filled; §3 Phase 3 `complete`.
 - Default `npm test` stays green without Gemini key (live suite skipped).
 
@@ -56,7 +56,7 @@ Split: unit foundation → integration mock guardrails (main Risk #3) → tagged
 
 **Fixture tokens:** Use stable literals e.g. `GUARDRAIL_ACCEPTED = "rifle-damage-10pct"` on line 1 and `GUARDRAIL_IGNORED = "internal-only-xyz"` on line 2 of `raw_content`. First line must be non-empty so mock `firstChangeLine` picks accepted text.
 
-**Live smoke gate:** `describe.skipIf(!process.env.GEMINI_API_KEY || !hasLocalSupabaseConfig())` — requires local Supabase **and** key. POST generation **without** `x-dev-mock-provider` so `getGenerationProvider()` resolves to Gemini. Document in §6.5 that this is optional manual/CI job input, not default pipeline.
+**Live smoke gate:** `describe.skipIf(!shouldRunLiveGeminiSmoke())` where `shouldRunLiveGeminiSmoke()` requires local Supabase, `RUN_LIVE_GEMINI_SMOKE=1`, non-placeholder `GEMINI_API_KEY`, and `AI_PROVIDER !== "mock"`. POST generation **without** `x-dev-mock-provider` so `getGenerationProvider()` resolves to Gemini. Assert fixture token in classification `source` (live output may paraphrase). Document in §6.5 that this is optional manual input, not default pipeline.
 
 **wrapProviderError tests:** Export function from `generation-workflow.ts` (named export). Cases: `GenerationProviderError` + `rate_limit` → `provider_rate_limit`; `api_error` / `invalid_response` → `provider_error`; plain `Error` / non-provider → `provider_error`. No HTTP layer tests in this change.
 
@@ -192,7 +192,7 @@ In-repo optional live smoke; skipped by default unless `GEMINI_API_KEY` present.
 
 **Intent**: Structural validation under real Gemini without mock header.
 
-**Contract**: `describe.skipIf(!process.env.GEMINI_API_KEY || !hasLocalSupabaseConfig())`; seed project + multi-line change input with tagged accepted token; POST generation-runs **without** `x-dev-mock-provider`; assert 201; response has non-empty `classifiedItems` passing `classificationResultSchema`; persisted output content includes accepted token (substring). Test name/description must **not** claim full hallucination detection.
+**Contract**: `describe.skipIf(!shouldRunLiveGeminiSmoke())` (local Supabase + `RUN_LIVE_GEMINI_SMOKE=1` + `GEMINI_API_KEY` + `AI_PROVIDER !== "mock"`); seed project + multi-line change input with tagged accepted token; POST generation-runs **without** `x-dev-mock-provider`; assert 201; response has non-empty `classifiedItems` passing `classificationResultSchema`; fixture token in classification `source`; `parsePromptSnapshot` shows `provider: "gemini"`. Test name/description must **not** claim full hallucination detection.
 
 #### 2. Env documentation
 
@@ -281,7 +281,7 @@ Unit tests dominate CI time (fast). One integration guardrail case reuses full m
 
 ## Migration Notes
 
-No database migrations. Optional export of `wrapProviderError` is the only production code touch.
+No database migrations. Production touches: export `wrapProviderError`; export `normalizeClassificationPayload` (trim null/non-string fields before Zod — no silent placeholder fill; invalid items fail schema and trigger provider retry).
 
 ## References
 

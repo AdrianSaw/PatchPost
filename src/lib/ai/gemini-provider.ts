@@ -137,7 +137,7 @@ async function callGeminiWithRetry(
   }
 }
 
-function normalizeClassificationPayload(parsed: unknown): unknown {
+export function normalizeClassificationPayload(parsed: unknown): unknown {
   if (!parsed || typeof parsed !== "object" || !("items" in parsed)) {
     return parsed;
   }
@@ -162,8 +162,8 @@ function normalizeClassificationPayload(parsed: unknown): unknown {
       return {
         ...item,
         source,
-        reason: reason || "Classification inferred from change text.",
-        suggested_public_summary: summary || source || "See change details.",
+        reason,
+        suggested_public_summary: summary,
       };
     }),
   };

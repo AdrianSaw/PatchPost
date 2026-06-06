@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-05-27
+> Last updated: 2026-06-06
 
 ## 1. Strategy
 
@@ -231,10 +231,10 @@ Risks **#3** (output derivable from manual input on the mock path) and **#4** (m
 
 **Recipe — optional live Gemini smoke**
 
-1. Set in `.env.local` (never commit): `RUN_LIVE_GEMINI_SMOKE=1` and `GEMINI_API_KEY` (see @.env.local.example).
+1. Set in `.env.local` (never commit): `RUN_LIVE_GEMINI_SMOKE=1`, `GEMINI_API_KEY`, and **do not** set `AI_PROVIDER=mock` (see @.env.local.example).
 2. Run `npm test -- tests/integration/generation-live-smoke.test.ts` once to verify.
 3. **Leave `RUN_LIVE_GEMINI_SMOKE` commented out** for day-to-day runs — default `npm test` must stay green without live API cost.
-4. POST **without** `x-dev-mock-provider`; assert `classificationResultSchema` on `classifiedItems`; assert accepted token appears in a classification `source` field (live changelog may paraphrase — do not require exact token in generated `content`).
+4. POST **without** `x-dev-mock-provider`; assert `classificationResultSchema` on `classifiedItems`; assert accepted token in a classification `source` field; assert `parsePromptSnapshot` shows `provider: "gemini"` (live changelog may paraphrase — do not require exact token in generated `content`).
 5. Do **not** assert ignored token is excluded on the live path.
 
 **Unit suites shipped (Phase 3)**
