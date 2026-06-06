@@ -322,12 +322,12 @@ No database migrations. Optional export of `wrapProviderError` is the only produ
 
 #### Automated
 
-- [x] 3.1 `npm test` passes without `GEMINI_API_KEY` (live suite skipped)
-- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 `npm test` passes without `GEMINI_API_KEY` (live suite skipped) — 4731448
+- [x] 3.2 Lint passes: `npm run lint` — 4731448
 
 #### Manual
 
-- [x] 3.3 Optional: live smoke passes once with `GEMINI_API_KEY` set locally
+- [x] 3.3 Optional: live smoke passes once with `GEMINI_API_KEY` set locally — 4731448
 
 ### Phase 4: Cookbook and test-plan closeout
 
