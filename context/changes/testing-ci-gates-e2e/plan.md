@@ -396,8 +396,8 @@ No database migrations. CI may need no new GitHub secrets for Vitest (ephemeral 
 
 #### Automated
 
-- [x] 2.1 `npm run typecheck` passes locally (fix ~25 pre-existing errors)
-- [x] 2.2 CI workflow runs typecheck before Vitest
+- [x] 2.1 `npm run typecheck` passes locally (fix ~25 pre-existing errors) — 5789b4b
+- [x] 2.2 CI workflow runs typecheck before Vitest — 5789b4b
 
 #### Manual
 
