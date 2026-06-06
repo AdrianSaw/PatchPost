@@ -407,8 +407,8 @@ No database migrations. CI may need no new GitHub secrets for Vitest (ephemeral 
 
 #### Automated
 
-- [x] 3.1 `npm run test:e2e -- tests/e2e/seed.spec.ts` passes locally
-- [x] 3.2 Lint passes on new Playwright files
+- [x] 3.1 `npm run test:e2e -- tests/e2e/seed.spec.ts` passes locally — 852294f
+- [x] 3.2 Lint passes on new Playwright files — 852294f
 
 #### Manual
 
