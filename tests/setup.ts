@@ -1,5 +1,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import ws from "ws";
+
+if (typeof globalThis.WebSocket === "undefined") {
+  globalThis.WebSocket = ws as unknown as typeof WebSocket;
+}
 
 export const SUPABASE_PREREQUISITE_MESSAGE =
   "Integration tests require local Supabase. Run: npm run supabase:start — then copy .env.local.example → .env.local with the Publishable key.";
@@ -44,6 +49,15 @@ function missingSupabaseEnv(): boolean {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_KEY;
   return !url || !key || key.includes("<Publishable");
+}
+
+/** True when `.env.local` points at local Docker Supabase (integration tests that need DB). */
+export function hasLocalSupabaseConfig(): boolean {
+  const url = process.env.SUPABASE_URL;
+  if (!url || missingSupabaseEnv()) {
+    return false;
+  }
+  return isLocalSupabaseUrl(url);
 }
 
 /** Fail fast when local Supabase is not configured or unreachable. */

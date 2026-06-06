@@ -297,8 +297,8 @@ No database migrations. Tests must run against F-02 schema already in `supabase/
 
 #### Automated
 
-- [x] 2.1 `npm test` passes (includes unauthenticated matrix)
-- [x] 2.2 Lint passes: `npm run lint`
+- [x] 2.1 `npm test` passes (includes unauthenticated matrix) — 94ca577
+- [x] 2.2 Lint passes: `npm run lint` — 94ca577
 
 #### Manual
 
@@ -308,8 +308,8 @@ No database migrations. Tests must run against F-02 schema already in `supabase/
 
 #### Automated
 
-- [ ] 3.1 Full `npm test` passes
-- [ ] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Full `npm test` passes
+- [x] 3.2 Lint passes: `npm run lint`
 - [ ] 3.3 Production build passes: `npm run build`
 
 #### Manual

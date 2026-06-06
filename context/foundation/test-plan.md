@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-03
+> Last updated: 2026-05-27
 
 ## 1. Strategy
 
@@ -62,7 +62,7 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|-----------------|---------------|------------|--------|---------------|
-| 1 | Bootstrap runner and auth boundaries | Add Vitest + first integration tests for session auth and cross-owner access | #1, #2 | unit + integration | researched | testing-bootstrap-auth-rls |
+| 1 | Bootstrap runner and auth boundaries | Add Vitest + first integration tests for session auth and cross-owner access | #1, #2 | unit + integration | complete | context/changes/testing-bootstrap-auth-rls |
 | 2 | API handler contracts | Cover form POST mutation routes for auth, validation redirects, and persistence | #2, #5 | integration | not started | — |
 | 3 | Generation guardrails | Lock no-hallucination and mock-provider behavior for classification + generation | #3, #4 | unit + integration | not started | — |
 | 4 | Quality gates and north-star e2e | Wire tests into CI; optional Playwright for login → project → manual → generate → save | cross-cutting | gates + e2e | not started | — |
@@ -74,7 +74,7 @@ The classic test base for this project. AI-native tools (if any) carry a
 
 | Layer | Tool | Version | Notes |
 |-------|------|---------|-------|
-| unit + integration | Vitest | none yet | Bootstrap in §3 Phase 1; run in Node with SSR handler tests |
+| unit + integration | Vitest | ^3.2.4 | `npm test` / `npm run test:watch`; integration tests require local Supabase |
 | API / DB boundary | Supabase local + test client | CLI 2.x | Use `npm run supabase:start` profile; reset between integration files |
 | HTTP mocking | MSW (optional) | none yet | Prefer real handler + local Supabase over mocking internal modules |
 | e2e | Playwright | none yet | Planned in AGENTS.md; land in Phase 4 for US-01 path only |
@@ -104,11 +104,48 @@ the relevant rollout phase ships.
 
 ### 6.1 Adding a unit test
 
-TBD — see §3 Phase 1.
+No dedicated unit-test files yet — Phase 1 rollout focused on auth/RLS **integration** tests (Risk #1–#2). When adding a unit test:
+
+1. Place pure-function tests next to the module or under `tests/unit/` (convention TBD in Phase 3 generation guardrails).
+2. Run `npm test` — Vitest picks up `tests/**/*.test.ts`.
+3. Do **not** mock Supabase or RLS for auth boundaries; use integration tests in `tests/integration/` instead.
+
+Reference: `context/changes/testing-bootstrap-auth-rls/` (Vitest bootstrap).
 
 ### 6.2 Adding an integration test
 
-TBD — see §3 Phase 1.
+Integration tests use **real local Supabase** (Docker via `npm run supabase:start`) and real JWT sessions — no internal module mocks for auth/RLS.
+
+**Prerequisites**
+
+1. `npm run supabase:start`
+2. Copy `.env.local.example` → `.env.local` with Publishable `SUPABASE_KEY` from CLI output
+3. `npm test`
+
+**Layout**
+
+| Path | Purpose |
+|------|---------|
+| `tests/setup.ts` | Loads `.env` + `.env.local`; `assertSupabaseReachable()` fails fast with one-line instructions |
+| `tests/helpers/supabase-session.ts` | `createTestUser()`, `signInAs()` — provision users via Auth API |
+| `tests/helpers/api-context.ts` | Build minimal Astro `APIContext` for handler imports |
+| `tests/helpers/middleware-request.ts` | Invoke `src/middleware.ts` without dev server |
+| `tests/integration/*.test.ts` | Integration suites |
+
+**Commands:** `npm test` (single run), `npm run test:watch`.
+
+**Existing suites (Risk #1–#2)**
+
+- `tests/integration/auth-api-unauthenticated.test.ts` — unauthenticated middleware matrix + handler guards
+- `tests/integration/rls-cross-owner.test.ts` — two-user RLS via services
+- `tests/integration/projects-api-cross-owner.test.ts` — cross-owner form POST on `POST /api/projects/[id]`
+- `tests/integration/harness-smoke.test.ts` — env + middleware smoke
+
+**Pattern:** `beforeAll` → `assertSupabaseReachable()` → `createTestUser()` × 2 → act as User B → assert `null`/empty/no row change (not HTTP 403).
+
+**Vitest env:** `vitest.config.ts` aliases `astro:env/server` to `tests/mocks/astro-env-server.ts` (reads `process.env.SUPABASE_*`). `tests/setup.ts` polyfills `WebSocket` via `ws` on Node versions below 22.
+
+**Skip policy:** Cross-owner suites use `describe.skipIf(!hasLocalSupabaseConfig())` when `.env.local` is missing or points at hosted Supabase; auth boundary tests still run. With local config but Docker stopped, `assertSupabaseReachable()` fails with the prerequisite message.
 
 ### 6.3 Adding an e2e test
 
@@ -124,7 +161,7 @@ TBD — see §3 Phase 3 for manual-input-only output and mock-provider contract.
 
 ### 6.6 Per-rollout-phase notes
 
-_(Filled in as phases complete.)_
+**Phase 1 — `context/changes/testing-bootstrap-auth-rls` (complete):** Vitest + local Supabase harness; integration coverage for Risks #1 (cross-owner IDOR) and #2 (unauthenticated API mutation). No Playwright, no CI test gate yet (test-plan Phase 4).
 
 ## 7. What We Deliberately Don't Test
 
