@@ -308,8 +308,8 @@ No database migrations. Tests must run against F-02 schema already in `supabase/
 
 #### Automated
 
-- [x] 3.1 Full `npm test` passes
-- [x] 3.2 Lint passes: `npm run lint`
+- [x] 3.1 Full `npm test` passes — e52d4fd
+- [x] 3.2 Lint passes: `npm run lint` — e52d4fd
 - [ ] 3.3 Production build passes: `npm run build`
 
 #### Manual
