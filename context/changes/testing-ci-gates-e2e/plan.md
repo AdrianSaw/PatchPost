@@ -429,7 +429,7 @@ No database migrations. CI may need no new GitHub secrets for Vitest (ephemeral 
 
 #### Automated
 
-- [ ] 5.1 CI workflow runs `npm run test:e2e` successfully
+- [x] 5.1 CI workflow runs `npm run test:e2e` successfully
 
 #### Manual
 
