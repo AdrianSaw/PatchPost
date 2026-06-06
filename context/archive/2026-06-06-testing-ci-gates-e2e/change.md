@@ -1,10 +1,10 @@
 ---
 change_id: testing-ci-gates-e2e
 title: Testing CI gates and e2e
-status: implemented
+status: archived
 created: 2026-06-06
-updated: 2026-05-27
-archived_at: null
+updated: 2026-06-06
+archived_at: 2026-06-06T20:27:11Z
 ---
 
 ## Notes
