@@ -439,9 +439,9 @@ No database migrations. CI may need no new GitHub secrets for Vitest (ephemeral 
 
 #### Automated
 
-- [ ] 6.1 Full local gate: typecheck, lint, test, build, test:e2e
-- [ ] 6.2 test-plan §6.3 and §3 Phase 4 updated
+- [x] 6.1 Full local gate: typecheck, lint, test, build, test:e2e
+- [x] 6.2 test-plan §6.3 and §3 Phase 4 updated
 
 #### Manual
 
-- [ ] 6.3 §6.3 recipe matches file names in repo
+- [x] 6.3 §6.3 recipe matches file names in repo

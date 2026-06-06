@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-06
+> Last updated: 2026-05-27
 
 ## 1. Strategy
 
@@ -64,8 +64,8 @@ orchestrator updates Status as artifacts appear on disk.
 |---|------------|-----------------|---------------|------------|--------|---------------|
 | 1 | Bootstrap runner and auth boundaries | Add Vitest + first integration tests for session auth and cross-owner access | #1, #2 | unit + integration | complete | context/changes/testing-bootstrap-auth-rls |
 | 2 | API handler contracts | Cover form POST mutation routes for auth, validation redirects, and persistence | #2, #5 | integration | complete | context/archive/2026-06-06-testing-api-handler-contracts |
-| 3 | Generation guardrails | Lock no-hallucination and mock-provider behavior for classification + generation | #3, #4 | unit + integration | complete | context/changes/testing-generation-guardrails |
-| 4 | Quality gates and north-star e2e | Wire tests into CI; optional Playwright for login → project → manual → generate → save | cross-cutting | gates + e2e | not started | — |
+| 3 | Generation guardrails | Lock no-hallucination and mock-provider behavior for classification + generation | #3, #4 | unit + integration | complete | context/archive/2026-06-06-testing-generation-guardrails |
+| 4 | Quality gates and north-star e2e | Wire tests into CI; Playwright for login → project → manual → generate → save | cross-cutting | gates + e2e | complete | context/changes/testing-ci-gates-e2e |
 
 ## 4. Stack
 
@@ -77,7 +77,7 @@ The classic test base for this project. AI-native tools (if any) carry a
 | unit + integration | Vitest | ^3.2.4 | `npm test` / `npm run test:watch`; integration tests require local Supabase |
 | API / DB boundary | Supabase local + test client | CLI 2.x | Use `npm run supabase:start` profile; reset between integration files |
 | HTTP mocking | MSW (optional) | none yet | Prefer real handler + local Supabase over mocking internal modules |
-| e2e | Playwright | none yet | Planned in AGENTS.md; land in Phase 4 for US-01 path only |
+| e2e | Playwright | ^1.55.0 | `npm run test:e2e`; US-01 north-star in `tests/e2e/main-flow.spec.ts`; CI runs Chromium after Vitest |
 | accessibility | none | — | Out of scope until core auth/generation floor exists |
 
 **Stack grounding tools (current session):**
@@ -161,7 +161,59 @@ Integration tests use **real local Supabase** (Docker via `npm run supabase:star
 
 ### 6.3 Adding an e2e test
 
-TBD — see §3 Phase 4.
+Browser wiring for the US-01 path (login → project → generate → draft history). E2e **complements** integration tests — it does not replace Risks #1–#5 handler/RLS coverage.
+
+**Prerequisites**
+
+1. `npm run supabase:start`
+2. `.env.local` with local `SUPABASE_URL`, Publishable `SUPABASE_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` (Secret from `npx supabase status`) — same as §6.2; global setup provisions invite-only users via Admin API
+3. One-time browser install: `npx playwright install chromium`
+4. Do **not** run a separate dev server on port **4322** — Playwright starts Astro via `playwright.config.ts` (`127.0.0.1:4322`)
+
+**Layout**
+
+| Path | Purpose |
+|------|---------|
+| `playwright.config.ts` | `webServer` runs `npm run dev:local`; `workers: 1`; `globalSetup` |
+| `tests/e2e/global-setup.ts` | Provisions e2e user; writes `tests/e2e/.auth/user.json` (gitignored) |
+| `tests/e2e/fixtures/auth.ts` | `signInThroughUi`, island hydration helpers, React field fills |
+| `tests/e2e/00-seed.spec.ts` | Harness smoke — sign-in only; run first when debugging stack |
+| `tests/e2e/main-flow.spec.ts` | US-01 product wiring — mock AI, drafts success banner |
+| `tests/e2e/E2E-RULES.md` | Agent-readable locator/wait/isolation rules for new specs |
+
+**Commands**
+
+- `npm run test:e2e` — both specs (seed runs first by filename)
+- `npm run test:e2e:ui` — Playwright UI mode
+- `npm run test:e2e -- tests/e2e/main-flow.spec.ts` — single spec
+
+**Mock AI (required for generate flow)**
+
+- Dev server (`import.meta.env.DEV`) shows **Use mock AI provider (dev only)** on `/app/projects/{id}/generate` — leave checked
+- Client sends `x-dev-mock-provider: 1` on `POST /api/projects/{id}/generation-runs`
+- `main-flow.spec.ts` asserts that header and a snippet containing `GUARDRAIL_ACCEPTED` from `tests/helpers/guardrail-fixtures.ts`
+
+**Recipe — add a second e2e spec**
+
+1. Add `tests/e2e/<name>.spec.ts`; reuse `signInThroughUi` / `fillReactField` from `fixtures/auth.ts`
+2. For fetch-based React islands (`GenerateForm`), call `waitForGenerateFormReady(page)` before interacting
+3. For native form POST islands (`ProjectForm`), use `getByRole` / `getByLabel` fills (no `#id` selectors)
+4. Keep assertions wiring-level — do not claim full regression of integration risks in the spec title
+5. Run `npm run lint` and `npm run test:e2e`
+
+**CI**
+
+- `.github/workflows/ci.yml` runs `npx playwright install --with-deps chromium` then `npm run test:e2e` after Vitest, using the same ephemeral local Supabase env
+
+**Anti-patterns**
+
+- Live Gemini or `AI_PROVIDER=mock` without dev header in e2e — use mock checkbox path only
+- `astro preview` for e2e mock header (prod-like; no dev checkbox unless configured)
+- Parallel Playwright workers against shared Supabase state
+- Reusing a stale manual dev server on port 4322 while running `npm run test:e2e`
+- Duplicating Admin API user provisioning inside spec files
+
+Reference: `context/changes/testing-ci-gates-e2e/` (Rollout Phase 4).
 
 ### 6.4 Adding a test for a new API endpoint
 
@@ -254,7 +306,7 @@ Risks **#3** (output derivable from manual input on the mock path) and **#4** (m
 - Test names or docs claiming live smoke proves full hallucination detection
 - Duplicating the full generation workflow in multiple integration files when extending output types — reuse the mock guardrail case pattern
 
-Reference: `context/changes/testing-generation-guardrails/` (Rollout Phase 3).
+Reference: `context/archive/2026-06-06-testing-generation-guardrails/` (Rollout Phase 3).
 
 ### 6.6 Per-rollout-phase notes
 
@@ -262,7 +314,9 @@ Reference: `context/changes/testing-generation-guardrails/` (Rollout Phase 3).
 
 **Phase 2 — `context/archive/2026-06-06-testing-api-handler-contracts` (complete):** Owner happy-path + validation contracts for all five mutation handlers (form + JSON); shared seed/redirect/json helpers; §6.4 cookbook. Invite-only local Auth: tests use Admin API via `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`. CI test gate still deferred (test-plan Phase 4).
 
-**Phase 3 — `context/changes/testing-generation-guardrails` (complete):** Unit guardrails under `tests/unit/`; mock-path multi-line fixture regression in `generation-runs-api-contracts.test.ts`; optional live smoke in `generation-live-smoke.test.ts` gated on `RUN_LIVE_GEMINI_SMOKE=1` + `GEMINI_API_KEY`; shared `guardrail-fixtures.ts`; §6.5 cookbook. `wrapProviderError` exported for unit testing. CI test gate still deferred (test-plan Phase 4).
+**Phase 3 — `context/archive/2026-06-06-testing-generation-guardrails` (complete):** Unit guardrails under `tests/unit/`; mock-path multi-line fixture regression in `generation-runs-api-contracts.test.ts`; optional live smoke in `generation-live-smoke.test.ts` gated on `RUN_LIVE_GEMINI_SMOKE=1` + `GEMINI_API_KEY`; shared `guardrail-fixtures.ts`; §6.5 cookbook. `wrapProviderError` exported for unit testing. CI test gate still deferred (test-plan Phase 4).
+
+**Phase 4 — `context/changes/testing-ci-gates-e2e` (complete):** CI runs `npm run typecheck`, full Vitest + local Supabase, Playwright e2e (`00-seed.spec.ts` + `main-flow.spec.ts`), lint, and build. E2e uses dedicated dev server on `127.0.0.1:4322`, mock AI checkbox, and `x-dev-mock-provider: 1`; §6.3 cookbook.
 
 ## 7. What We Deliberately Don't Test
 

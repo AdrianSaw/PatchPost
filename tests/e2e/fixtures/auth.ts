@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 const AUTH_FILE = path.join(process.cwd(), "tests/e2e/.auth/user.json");
 
@@ -24,20 +24,17 @@ export function readE2eCredentials(): E2eCredentials {
   }
 }
 
-/** Wait until a React island has attached handlers to `selector` (Astro client:load). */
-export async function waitForReactHydration(page: Page, selector: string): Promise<void> {
-  await page.locator(selector).waitFor({ state: "visible" });
-  await page.waitForFunction((sel) => {
-    const element = document.querySelector(sel);
-    if (!element) {
-      return false;
-    }
-    return Object.keys(element).some((key) => key.startsWith("__reactFiber$") || key.startsWith("__reactProps$"));
-  }, selector);
+/** Wait until a React island has attached handlers to `field`. */
+export async function waitForReactHydration(field: Locator): Promise<void> {
+  await field.waitFor({ state: "visible" });
+  await field.evaluate((element) =>
+    Object.keys(element).some((key) => key.startsWith("__reactFiber$") || key.startsWith("__reactProps$")),
+  );
 }
 
 /** Wait for GenerateForm island module + React handlers (fetch-based submit requires hydration). */
 export async function waitForGenerateFormReady(page: Page): Promise<void> {
+  const changesField = page.getByRole("textbox", { name: "Changes" });
   const moduleLoaded = page.waitForResponse(
     (response) => {
       const status = response.status();
@@ -50,18 +47,12 @@ export async function waitForGenerateFormReady(page: Page): Promise<void> {
     { timeout: 30_000 },
   );
   await moduleLoaded;
-  await waitForReactHydration(page, "#raw_content");
-}
-
-/** Fill native POST form fields (DOM value is submitted; island hydration not required). */
-export async function fillDomFormField(page: Page, selector: string, value: string): Promise<void> {
-  await page.locator(selector).fill(value);
+  await waitForReactHydration(changesField);
 }
 
 /** Fill a React controlled field after the island has hydrated. */
-export async function fillReactField(page: Page, selector: string, value: string): Promise<void> {
-  await waitForReactHydration(page, selector);
-  const field = page.locator(selector);
+export async function fillReactField(field: Locator, value: string): Promise<void> {
+  await waitForReactHydration(field);
   await field.click();
 
   const tagName = await field.evaluate((element) => element.tagName.toLowerCase());
@@ -79,8 +70,7 @@ export async function fillReactField(page: Page, selector: string, value: string
   }, value);
 }
 
-async function fillControlledInput(page: Page, selector: string, value: string): Promise<void> {
-  const field = page.locator(selector);
+async function fillControlledInput(field: Locator, value: string): Promise<void> {
   await field.waitFor({ state: "visible" });
   await field.click();
   await field.evaluate((element, text) => {
@@ -96,9 +86,10 @@ async function fillControlledInput(page: Page, selector: string, value: string):
 export async function signInThroughUi(page: Page): Promise<E2eCredentials> {
   const credentials = readE2eCredentials();
   await page.goto("/auth/signin");
-  await waitForReactHydration(page, "#email");
-  await fillControlledInput(page, "#email", credentials.email);
-  await fillControlledInput(page, "#password", credentials.password);
+  const emailField = page.getByRole("textbox", { name: "Email" });
+  await waitForReactHydration(emailField);
+  await fillControlledInput(emailField, credentials.email);
+  await fillControlledInput(page.getByRole("textbox", { name: "Password" }), credentials.password);
   await page.getByRole("button", { name: "Sign in" }).click();
   await page.waitForURL("**/app/projects**");
   return credentials;
