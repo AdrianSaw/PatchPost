@@ -16,10 +16,11 @@ function redirectWithError(context: Parameters<APIRoute>[0], projectId: string, 
 }
 
 export const POST: APIRoute = async (context) => {
-  const projectId = context.params.id;
-  if (!z.uuid().safeParse(projectId).success) {
+  const projectIdResult = z.uuid().safeParse(context.params.id);
+  if (!projectIdResult.success) {
     return context.redirect("/app/projects");
   }
+  const projectId = projectIdResult.data;
 
   const supabase = createClient(context.request.headers, context.cookies);
   if (!supabase) {

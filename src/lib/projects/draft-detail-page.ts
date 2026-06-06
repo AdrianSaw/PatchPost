@@ -27,10 +27,11 @@ export async function loadDraftDetailPage(
     return page;
   }
 
-  const draftId = astro.params.draftId;
-  if (!z.uuid().safeParse(draftId).success) {
+  const draftIdResult = z.uuid().safeParse(astro.params.draftId);
+  if (!draftIdResult.success) {
     return { kind: "redirect", to: `/app/projects/${page.project.id}/drafts` };
   }
+  const draftId = draftIdResult.data;
 
   const supabase = createClient(astro.request.headers, astro.cookies);
   if (!supabase) {

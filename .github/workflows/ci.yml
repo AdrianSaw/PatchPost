@@ -41,8 +41,7 @@ jobs:
           echo "SUPABASE_KEY=$(jq -r '.ANON_KEY' /tmp/supabase-status.json)" >> $GITHUB_ENV
           echo "SUPABASE_SERVICE_ROLE_KEY=$(jq -r '.SERVICE_ROLE_KEY' /tmp/supabase-status.json)" >> $GITHUB_ENV
 
-      # TODO(testing-ci-gates-e2e Phase 2): re-enable after fixing ~25 pre-existing astro check errors
-      # - run: npm run typecheck
+      - run: npm run typecheck
       - run: npm test
       - run: npm run lint
       - run: npm run build

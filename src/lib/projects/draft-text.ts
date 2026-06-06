@@ -1,6 +1,8 @@
 import type { GeneratedOutput } from "@/types";
 
-export function draftDisplayTitle(draft: GeneratedOutput): string {
+type DraftTextFields = Pick<GeneratedOutput, "title" | "content" | "edited_content">;
+
+export function draftDisplayTitle(draft: DraftTextFields): string {
   const title = draft.title?.trim();
   if (title) {
     return title;
@@ -8,11 +10,11 @@ export function draftDisplayTitle(draft: GeneratedOutput): string {
   return "Untitled draft";
 }
 
-export function draftBody(draft: GeneratedOutput): string {
+export function draftBody(draft: DraftTextFields): string {
   return draft.edited_content ?? draft.content;
 }
 
-export function draftSnippet(draft: GeneratedOutput, maxLength = 120): string {
+export function draftSnippet(draft: DraftTextFields, maxLength = 120): string {
   const text = draftBody(draft).trim().replace(/\s+/g, " ");
   if (text.length <= maxLength) {
     return text;

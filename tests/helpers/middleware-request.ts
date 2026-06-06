@@ -35,23 +35,25 @@ export async function invokeMiddleware(options: MiddlewareRequestOptions): Promi
   const redirects: string[] = [];
   let nextCalled = false;
 
+  const locals = { user: null } as App.Locals;
+
   const context = {
     url,
     request,
     cookies,
-    locals: { user: null },
+    locals,
     redirect(target: string, status = 302) {
       redirects.push(target);
       return new Response(null, { status, headers: { Location: target } });
     },
-  };
+  } as Parameters<MiddlewareHandler>[0];
 
-  const next: MiddlewareHandler = () => {
+  const next = (() => {
     nextCalled = true;
     return Promise.resolve(new Response("ok", { status: 200 }));
-  };
+  }) as Parameters<typeof onRequest>[1];
 
-  const response = await onRequest(context, next);
+  const response = (await onRequest(context, next)) ?? new Response(null, { status: 500 });
 
   return {
     response,

@@ -390,14 +390,14 @@ No database migrations. CI may need no new GitHub secrets for Vitest (ephemeral 
 
 #### Manual
 
-- [ ] 1.3 CI run: integration suites execute (not skipped); build still uses hosted secrets
+- [x] 1.3 CI run: integration suites execute (not skipped); build still uses hosted secrets — a4510cb
 
 ### Phase 2: CI typecheck gate
 
 #### Automated
 
-- [ ] 2.1 `npm run typecheck` passes locally (fix ~25 pre-existing errors)
-- [ ] 2.2 CI workflow runs typecheck before Vitest
+- [x] 2.1 `npm run typecheck` passes locally (fix ~25 pre-existing errors)
+- [x] 2.2 CI workflow runs typecheck before Vitest
 
 #### Manual
 

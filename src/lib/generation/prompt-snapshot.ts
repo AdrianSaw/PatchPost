@@ -12,6 +12,7 @@ const promptSnapshotSchema = z.object({
 export interface ParsedPromptSnapshot {
   classifiedItems: ClassificationItem[];
   outputLanguage?: "pl" | "en";
+  provider?: string;
 }
 
 export function parsePromptSnapshot(raw: string | null | undefined): ParsedPromptSnapshot | null {
@@ -34,5 +35,6 @@ export function parsePromptSnapshot(raw: string | null | undefined): ParsedPromp
   return {
     classifiedItems: parsed.data.classifiedItems ?? [],
     outputLanguage: parsed.data.outputLanguage,
+    provider: parsed.data.provider,
   };
 }

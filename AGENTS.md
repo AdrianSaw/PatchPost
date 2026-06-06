@@ -62,4 +62,4 @@ Node **22.14+** (@.nvmrc). Husky + lint-staged: ESLint on `*.{ts,tsx,astro}`, Pr
 
 ## CI and commits
 
-Gate: @.github/workflows/ci.yml on `master` — `npm ci`, `npx astro sync`, local Supabase start, `npm test`, `npm run lint`, `npm run build` (build step uses hosted `SUPABASE_*` GitHub secrets only). `npm run typecheck` is deferred to plan Phase 2 (~25 pre-existing `astro check` errors). After `git init`, use commit prefixes from plan §23 (`feat:`, `fix:`, `docs:`, `ci:`, `test:`).
+Gate: @.github/workflows/ci.yml on `master` — `npm ci`, `npx astro sync`, local Supabase start, `npm run typecheck`, `npm test`, `npm run lint`, `npm run build` (build step uses hosted `SUPABASE_*` GitHub secrets only). After `git init`, use commit prefixes from plan §23 (`feat:`, `fix:`, `docs:`, `ci:`, `test:`).

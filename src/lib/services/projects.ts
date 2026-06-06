@@ -1,17 +1,7 @@
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
-import type { z } from "zod";
 import type { CreateProjectInput, Project, UpdateProjectInput } from "@/types";
 import { createProjectSchema, updateProjectSchema } from "@/types";
-
-function validationError(error: z.ZodError): PostgrestError {
-  return {
-    name: "ValidationError",
-    message: error.issues.map((issue) => issue.message).join("; "),
-    details: "",
-    hint: "",
-    code: "validation_error",
-  };
-}
+import { validationPostgrestError } from "@/lib/services/postgrest-error";
 
 export async function listProjects(supabase: SupabaseClient) {
   return supabase.from("projects").select("*").order("created_at", { ascending: false });
@@ -31,7 +21,7 @@ export async function createProject(
 ): Promise<{ data: Project | null; error: PostgrestError | null }> {
   const parsed = createProjectSchema.safeParse(input);
   if (!parsed.success) {
-    return { data: null, error: validationError(parsed.error) };
+    return { data: null, error: validationPostgrestError(parsed.error) };
   }
 
   return supabase
@@ -54,7 +44,7 @@ export async function updateProject(
 ): Promise<{ data: Project | null; error: PostgrestError | null }> {
   const parsed = updateProjectSchema.safeParse(input);
   if (!parsed.success) {
-    return { data: null, error: validationError(parsed.error) };
+    return { data: null, error: validationPostgrestError(parsed.error) };
   }
 
   return supabase.from("projects").update(parsed.data).eq("id", projectId).select().single();

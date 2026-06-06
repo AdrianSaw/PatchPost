@@ -14,7 +14,7 @@ function lazyEnv(key: string): string {
 
         const method = String.prototype[prop as keyof string];
         if (typeof method === "function") {
-          return (...args: unknown[]) => method.apply(value, args as []);
+          return (...args: unknown[]) => Reflect.apply(method, value, args) as string;
         }
 
         return value[prop as keyof string];

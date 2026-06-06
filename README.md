@@ -245,7 +245,7 @@ If Supabase is stopped or env is missing, integration suites skip locally with a
 
 ## CI
 
-GitHub Actions runs full Vitest (ephemeral local Supabase), lint, and build on every push and PR to `master` ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). The test steps use keys from `npx supabase status`; configure hosted `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets for the build step only. `npm run typecheck` in CI is planned for a follow-up phase once existing `astro check` errors are fixed.
+GitHub Actions runs typecheck, full Vitest (ephemeral local Supabase), lint, and build on every push and PR to `master` ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). The test steps use keys from `npx supabase status`; configure hosted `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets for the build step only.
 
 ## License
 
