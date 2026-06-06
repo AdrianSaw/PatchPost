@@ -1,8 +1,10 @@
 import { beforeAll, describe, expect, it, vi } from "vitest";
+import { parsePromptSnapshot } from "@/lib/generation/prompt-snapshot";
 import { getGenerationRunById, listGenerationRunsByProject } from "@/lib/services/generation-runs";
 import { getGeneratedOutputById } from "@/lib/services/generated-outputs";
 import { POST as postGenerationRun } from "@/pages/api/projects/[id]/generation-runs";
 import { createJsonApiContext } from "../helpers/json-api-context";
+import { buildMultiLineGuardrailInput } from "../helpers/guardrail-fixtures";
 import { seedChangeInput, seedProject } from "../helpers/seed-fixtures";
 import { createTestUser, type TestUserSession } from "../helpers/supabase-session";
 import { assertSupabaseReachable, hasLocalSupabaseConfig } from "../setup";
@@ -91,5 +93,38 @@ describe.skipIf(!hasLocalSupabaseConfig())("generation-runs API contracts", () =
 
     const { data: afterList } = await listGenerationRunsByProject(session.client, projectId);
     expect(afterList?.length ?? 0).toBe(countBefore);
+  });
+
+  it("persists mock output with accepted token and without ignored token from multi-line input", async () => {
+    const { raw_content, accepted, ignored } = buildMultiLineGuardrailInput();
+    const firstLine = raw_content.split("\n")[0]?.trim() ?? raw_content;
+    const guardrailInput = await seedChangeInput(session, projectId, { raw_content });
+
+    const { context } = createJsonApiContext(session, {
+      pathname: `/api/projects/${projectId}/generation-runs`,
+      params: { id: projectId },
+      body: { change_input_id: guardrailInput.id, output_type: "changelog" },
+      extraHeaders: { "x-dev-mock-provider": "1" },
+    });
+
+    const response = await postGenerationRun(context);
+    expect(response.status).toBe(201);
+
+    const payload = (await response.json()) as {
+      generationRun: { id: string };
+      generatedOutput: { id: string };
+      classifiedItems: { source: string }[];
+    };
+
+    expect(payload.classifiedItems[0]?.source).toBe(firstLine);
+
+    const { data: output } = await getGeneratedOutputById(session.client, payload.generatedOutput.id);
+    expect(output?.content).toContain(accepted);
+    expect(output?.content).not.toContain(ignored);
+
+    const { data: run } = await getGenerationRunById(session.client, payload.generationRun.id);
+    const snapshot = parsePromptSnapshot(run?.prompt_snapshot);
+    expect(snapshot?.classifiedItems[0]?.source).toBe(firstLine);
+    expect(run?.prompt_snapshot).toContain('"provider":"mock"');
   });
 });

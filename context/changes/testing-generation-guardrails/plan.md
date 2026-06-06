@@ -300,23 +300,23 @@ No database migrations. Optional export of `wrapProviderError` is the only produ
 
 #### Automated
 
-- [x] 1.1 Unit tests pass: `npm test -- tests/unit`
-- [x] 1.2 Lint passes: `npm run lint`
+- [x] 1.1 Unit tests pass: `npm test -- tests/unit` — 8ad94ea
+- [x] 1.2 Lint passes: `npm run lint` — 8ad94ea
 
 #### Manual
 
-- [x] 1.3 `wrapProviderError` exported and covered without API/route changes
+- [x] 1.3 `wrapProviderError` exported and covered without API/route changes — 8ad94ea
 
 ### Phase 2: Integration mock guardrails
 
 #### Automated
 
-- [ ] 2.1 `npm test` passes (includes multi-line guardrail case with local env)
-- [ ] 2.2 Lint passes: `npm run lint`
+- [x] 2.1 `npm test` passes (includes multi-line guardrail case with local env)
+- [x] 2.2 Lint passes: `npm run lint`
 
 #### Manual
 
-- [ ] 2.3 Studio spot-check: generated content includes accepted token, excludes ignored token
+- [x] 2.3 Studio spot-check: generated content includes accepted token, excludes ignored token
 
 ### Phase 3: Tagged live Gemini smoke
 
