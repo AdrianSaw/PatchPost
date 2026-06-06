@@ -235,17 +235,17 @@ Worker runtime secrets (`SUPABASE_*`) are set once via `wrangler secret put`; CI
 
 ## Testing
 
-Auth and RLS integration tests use Vitest against **local Supabase** (not CI yet):
+Auth and RLS integration tests use Vitest against **local Supabase**:
 
 1. `npm run supabase:start`
 2. Copy `.env.local.example` → `.env.local` and set the Publishable key from the CLI output
 3. `npm test`
 
-If Supabase is stopped or env is missing, tests print a clear prerequisite message. See `context/foundation/test-plan.md` §6 for cookbook patterns (populated as rollout phases land).
+If Supabase is stopped or env is missing, integration suites skip locally with a clear prerequisite message. CI runs the full suite with Docker Supabase on every PR (see below). See `context/foundation/test-plan.md` §6 for cookbook patterns (populated as rollout phases land).
 
 ## CI
 
-GitHub Actions runs lint + build on every push and PR to `master` ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets for the build step.
+GitHub Actions runs full Vitest (ephemeral local Supabase), lint, and build on every push and PR to `master` ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). The test steps use keys from `npx supabase status`; configure hosted `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets for the build step only. `npm run typecheck` in CI is planned for a follow-up phase once existing `astro check` errors are fixed.
 
 ## License
 
