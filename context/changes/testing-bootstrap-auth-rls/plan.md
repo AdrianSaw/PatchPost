@@ -291,7 +291,7 @@ No database migrations. Tests must run against F-02 schema already in `supabase/
 
 #### Manual
 
-- [ ] 1.4 Harness works with Supabase up; clear error when Supabase down
+- [x] 1.4 Harness works with Supabase up; clear error when Supabase down
 
 ### Phase 2: Unauthenticated API boundary tests
 
@@ -302,7 +302,7 @@ No database migrations. Tests must run against F-02 schema already in `supabase/
 
 #### Manual
 
-- [ ] 2.3 Middleware 401 test fails if auth gate removed locally
+- [x] 2.3 Middleware 401 test fails if auth gate removed locally
 
 ### Phase 3: Cross-owner access and cookbook closeout
 
@@ -314,4 +314,4 @@ No database migrations. Tests must run against F-02 schema already in `supabase/
 
 #### Manual
 
-- [ ] 3.4 Cross-owner isolation verified after `db reset` + test run
+- [x] 3.4 Cross-owner isolation verified after `db reset` + test run
