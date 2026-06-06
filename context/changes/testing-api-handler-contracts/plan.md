@@ -337,13 +337,13 @@ No database migrations. Requires F-02 schema from existing `supabase/migrations/
 
 #### Automated
 
-- [x] 3.1 `npm test` passes (all four contract suites)
-- [x] 3.2 Lint passes: `npm run lint`
-- [x] 3.3 Production build passes: `npm run build`
+- [x] 3.1 `npm test` passes (all four contract suites) — 6f1777e
+- [x] 3.2 Lint passes: `npm run lint` — 6f1777e
+- [x] 3.3 Production build passes: `npm run build` — 6f1777e
 
 #### Manual
 
-- [x] 3.4 Generation mock run visible in Supabase Studio after test run
+- [x] 3.4 Generation mock run visible in Supabase Studio after test run — 6f1777e
 
 ### Phase 4: Cookbook and test-plan closeout
 
