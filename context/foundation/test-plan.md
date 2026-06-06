@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-05-27
+> Last updated: 2026-06-06
 
 ## 1. Strategy
 
@@ -62,10 +62,10 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|-----------------|---------------|------------|--------|---------------|
-| 1 | Bootstrap runner and auth boundaries | Add Vitest + first integration tests for session auth and cross-owner access | #1, #2 | unit + integration | complete | context/changes/testing-bootstrap-auth-rls |
+| 1 | Bootstrap runner and auth boundaries | Add Vitest + first integration tests for session auth and cross-owner access | #1, #2 | unit + integration | complete | context/archive/2026-06-03-testing-bootstrap-auth-rls |
 | 2 | API handler contracts | Cover form POST mutation routes for auth, validation redirects, and persistence | #2, #5 | integration | complete | context/archive/2026-06-06-testing-api-handler-contracts |
 | 3 | Generation guardrails | Lock no-hallucination and mock-provider behavior for classification + generation | #3, #4 | unit + integration | complete | context/archive/2026-06-06-testing-generation-guardrails |
-| 4 | Quality gates and north-star e2e | Wire tests into CI; Playwright for login → project → manual → generate → save | cross-cutting | gates + e2e | complete | context/changes/testing-ci-gates-e2e |
+| 4 | Quality gates and north-star e2e | Wire tests into CI; Playwright for login → project → manual → generate → save | cross-cutting | gates + e2e | complete | context/archive/2026-06-06-testing-ci-gates-e2e |
 
 ## 4. Stack
 
@@ -110,7 +110,7 @@ No dedicated unit-test files yet — Phase 1 rollout focused on auth/RLS **integ
 2. Run `npm test` — Vitest picks up `tests/**/*.test.ts`.
 3. Do **not** mock Supabase or RLS for auth boundaries; use integration tests in `tests/integration/` instead.
 
-Reference: `context/changes/testing-bootstrap-auth-rls/` (Vitest bootstrap).
+Reference: `context/archive/2026-06-03-testing-bootstrap-auth-rls/` (Vitest bootstrap).
 
 ### 6.2 Adding an integration test
 
@@ -213,11 +213,11 @@ Browser wiring for the US-01 path (login → project → generate → draft hist
 - Reusing a stale manual dev server on port 4322 while running `npm run test:e2e`
 - Duplicating Admin API user provisioning inside spec files
 
-Reference: `context/changes/testing-ci-gates-e2e/` (Rollout Phase 4).
+Reference: `context/archive/2026-06-06-testing-ci-gates-e2e/` (Rollout Phase 4).
 
 ### 6.4 Adding a test for a new API endpoint
 
-Use this recipe when adding integration coverage for a new mutation route (form POST or JSON). See `context/changes/testing-api-handler-contracts/` for reference implementations.
+Use this recipe when adding integration coverage for a new mutation route (form POST or JSON). See `context/archive/2026-06-06-testing-api-handler-contracts/` for reference implementations.
 
 **Prerequisites**
 
@@ -316,7 +316,7 @@ Reference: `context/archive/2026-06-06-testing-generation-guardrails/` (Rollout 
 
 **Phase 3 — `context/archive/2026-06-06-testing-generation-guardrails` (complete):** Unit guardrails under `tests/unit/`; mock-path multi-line fixture regression in `generation-runs-api-contracts.test.ts`; optional live smoke in `generation-live-smoke.test.ts` gated on `RUN_LIVE_GEMINI_SMOKE=1` + `GEMINI_API_KEY`; shared `guardrail-fixtures.ts`; §6.5 cookbook. `wrapProviderError` exported for unit testing. CI test gate still deferred (test-plan Phase 4).
 
-**Phase 4 — `context/changes/testing-ci-gates-e2e` (complete):** CI runs `npm run typecheck`, full Vitest + local Supabase, Playwright e2e (`00-seed.spec.ts` + `main-flow.spec.ts`), lint, and build. E2e uses dedicated dev server on `127.0.0.1:4322`, mock AI checkbox, and `x-dev-mock-provider: 1`; §6.3 cookbook.
+**Phase 4 — `context/archive/2026-06-06-testing-ci-gates-e2e` (complete):** CI runs `npm run typecheck`, full Vitest + local Supabase, Playwright e2e (`00-seed.spec.ts` + `main-flow.spec.ts`), lint, and build. E2e uses dedicated dev server on `127.0.0.1:4322`, mock AI checkbox, and `x-dev-mock-provider: 1`; §6.3 cookbook.
 
 ## 7. What We Deliberately Don't Test
 
