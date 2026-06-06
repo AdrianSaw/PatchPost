@@ -71,7 +71,7 @@ async function markRunFailed(supabase: SupabaseClient, generationRunId: string):
   }
 }
 
-function wrapProviderError(error: unknown): GenerationWorkflowError {
+export function wrapProviderError(error: unknown): GenerationWorkflowError {
   if (error instanceof GenerationProviderError) {
     if (error.code === "rate_limit") {
       return new GenerationWorkflowError("AI rate limit, try again shortly", "provider_rate_limit", error);
