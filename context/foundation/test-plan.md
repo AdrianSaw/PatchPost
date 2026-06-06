@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-05-27
+> Last updated: 2026-06-06
 
 ## 1. Strategy
 
@@ -63,7 +63,7 @@ orchestrator updates Status as artifacts appear on disk.
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|-----------------|---------------|------------|--------|---------------|
 | 1 | Bootstrap runner and auth boundaries | Add Vitest + first integration tests for session auth and cross-owner access | #1, #2 | unit + integration | complete | context/changes/testing-bootstrap-auth-rls |
-| 2 | API handler contracts | Cover form POST mutation routes for auth, validation redirects, and persistence | #2, #5 | integration | not started | — |
+| 2 | API handler contracts | Cover form POST mutation routes for auth, validation redirects, and persistence | #2, #5 | integration | complete | context/changes/testing-api-handler-contracts |
 | 3 | Generation guardrails | Lock no-hallucination and mock-provider behavior for classification + generation | #3, #4 | unit + integration | not started | — |
 | 4 | Quality gates and north-star e2e | Wire tests into CI; optional Playwright for login → project → manual → generate → save | cross-cutting | gates + e2e | not started | — |
 
@@ -127,8 +127,12 @@ Integration tests use **real local Supabase** (Docker via `npm run supabase:star
 | Path | Purpose |
 |------|---------|
 | `tests/setup.ts` | Loads `.env` + `.env.local`; `assertSupabaseReachable()` fails fast with one-line instructions |
-| `tests/helpers/supabase-session.ts` | `createTestUser()`, `signInAs()` — provision users via Auth API |
+| `tests/helpers/supabase-session.ts` | `createTestUser()`, `signInAs()` — Admin API when `SUPABASE_SERVICE_ROLE_KEY` set (invite-only local) |
 | `tests/helpers/api-context.ts` | Build minimal Astro `APIContext` for handler imports |
+| `tests/helpers/json-api-context.ts` | JSON POST/PATCH with `Content-Type` + serialized body |
+| `tests/helpers/authenticated-api-context.ts` | Form POST with session cookies pre-applied |
+| `tests/helpers/seed-fixtures.ts` | `seedProject`, `seedChangeInput`, `seedDraftViaGeneration` |
+| `tests/helpers/redirect-assertions.ts` | Presence-only `?error=` and success redirect helpers |
 | `tests/helpers/middleware-request.ts` | Invoke `src/middleware.ts` without dev server |
 | `tests/integration/*.test.ts` | Integration suites |
 
@@ -140,6 +144,14 @@ Integration tests use **real local Supabase** (Docker via `npm run supabase:star
 - `tests/integration/rls-cross-owner.test.ts` — two-user RLS via services
 - `tests/integration/projects-api-cross-owner.test.ts` — cross-owner form POST on `POST /api/projects/[id]`
 - `tests/integration/harness-smoke.test.ts` — env + middleware smoke
+
+**Existing suites (Risk #2, #5 — handler contracts)**
+
+- `tests/integration/projects-form-post-contracts.test.ts` — owner form POST create/update/delete + validation redirects
+- `tests/integration/change-inputs-api-contracts.test.ts` — JSON create + 422 validation
+- `tests/integration/generation-runs-api-contracts.test.ts` — mock provider persistence + 422 validation
+- `tests/integration/drafts-api-contracts.test.ts` — PATCH persistence + 422 validation
+- `tests/integration/helpers-import.test.ts` — helper import smoke
 
 **Pattern:** `beforeAll` → `assertSupabaseReachable()` → `createTestUser()` × 2 → act as User B → assert `null`/empty/no row change (not HTTP 403).
 
@@ -153,7 +165,31 @@ TBD — see §3 Phase 4.
 
 ### 6.4 Adding a test for a new API endpoint
 
-TBD — see §3 Phase 2 for form POST mutation pattern (auth + validation redirect + persistence).
+Use this recipe when adding integration coverage for a new mutation route (form POST or JSON). See `context/changes/testing-api-handler-contracts/` for reference implementations.
+
+**Prerequisites**
+
+1. `npm run supabase:start`
+2. `.env.local` with local `SUPABASE_URL`, Publishable `SUPABASE_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` (Secret from `npx supabase status`) — required for invite-only local Auth (`enable_signup = false`)
+3. `npm test`
+
+**Steps**
+
+1. **Pick the handler style**
+   - **Form POST + redirects:** `createAuthenticatedFormContext(session, { method: "POST", pathname, params, body: formData })` — capture `redirects[]`; assert `?error=` with `expectFormErrorRedirect` (presence only) or success path with `expectRedirectToProject`.
+   - **JSON POST/PATCH:** `createJsonApiContext(session, { pathname, params, body, method?, extraHeaders? })` — assert `response.status` and `await response.json()`; validation failures expect `422` and `{ error: string }`.
+
+2. **Provision data** — `beforeAll`: `assertSupabaseReachable()` → `vi.stubEnv("SUPABASE_URL"|"SUPABASE_KEY", …)` → `createTestUser()` → `seedProject` / `seedChangeInput` as needed. For generation routes, pass `x-dev-mock-provider: 1` in DEV.
+
+3. **Invoke handler** — import `POST`/`PATCH` from `src/pages/api/...` and call with `context` (no dev server).
+
+4. **Assert HTTP contract** — redirects or status/body per step 1.
+
+5. **Assert DB state** — read back via owner's `session.client` and existing `@/lib/services/*` getters (`getProjectById`, `listChangeInputsByProject`, etc.). Validation cases: row count or field unchanged.
+
+6. **File placement** — add `tests/integration/<feature>-api-contracts.test.ts`; wrap in `describe.skipIf(!hasLocalSupabaseConfig())` when the suite needs Docker.
+
+**Do not** duplicate unauthenticated middleware matrix tests (`auth-api-unauthenticated.test.ts`) or cross-owner RLS suites unless the new route introduces a new authorization shape.
 
 ### 6.5 Adding a test for generation output guardrails
 
@@ -161,7 +197,9 @@ TBD — see §3 Phase 3 for manual-input-only output and mock-provider contract.
 
 ### 6.6 Per-rollout-phase notes
 
-**Phase 1 — `context/changes/testing-bootstrap-auth-rls` (complete):** Vitest + local Supabase harness; integration coverage for Risks #1 (cross-owner IDOR) and #2 (unauthenticated API mutation). Supporting extras: `ws` WebSocket polyfill (Node below 22), `mock-cookies.ts`, `astro-middleware.ts` mock. No Playwright, no CI test gate yet (test-plan Phase 4).
+**Phase 1 — `context/archive/2026-06-03-testing-bootstrap-auth-rls` (complete):** Vitest + local Supabase harness; integration coverage for Risks #1 (cross-owner IDOR) and #2 (unauthenticated API mutation). Supporting extras: `ws` WebSocket polyfill (Node below 22), `mock-cookies.ts`, `astro-middleware.ts` mock. No Playwright, no CI test gate yet (test-plan Phase 4).
+
+**Phase 2 — `context/changes/testing-api-handler-contracts` (complete):** Owner happy-path + validation contracts for all five mutation handlers (form + JSON); shared seed/redirect/json helpers; §6.4 cookbook. Invite-only local Auth: tests use Admin API via `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`. CI test gate still deferred (test-plan Phase 4).
 
 ## 7. What We Deliberately Don't Test
 
