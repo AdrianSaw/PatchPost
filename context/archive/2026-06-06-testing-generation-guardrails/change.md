@@ -1,10 +1,10 @@
 ---
 change_id: testing-generation-guardrails
 title: Testing generation guardrails
-status: impl_reviewed
+status: archived
 created: 2026-06-06
-updated: 2026-05-27
-archived_at: null
+updated: 2026-06-06
+archived_at: 2026-06-06T17:11:11Z
 ---
 
 ## Notes
