@@ -31,7 +31,7 @@ test.describe("Risk #5 — generate persists draft to history (US-01 wiring)", (
     // Open generate form (React island must hydrate before fetch-based submit)
     await test.step("Open generate form (wait for island hydration)", async () => {
       const generateFormLoaded = waitForGenerateFormReady(page);
-      await page.getByRole("link", { name: "Generate" }).click();
+      await page.getByRole("link", { name: "Generate", exact: true }).click();
       await generateFormLoaded;
       await expect(page.getByRole("heading", { name: "Generate content" })).toBeVisible();
       await expect(page.getByLabel("Use mock AI provider (dev only)")).toBeChecked();

@@ -442,21 +442,21 @@ Update `tests/e2e/main-flow.spec.ts` **only** if product intentionally changes l
 
 #### Automated
 
-- [x] 3.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
+- [x] 3.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass — 99042ff
 
 #### Manual
 
-- [x] 3.2 Projects empty/populated states and new project form clear
+- [x] 3.2 Projects empty/populated states and new project form clear — 99042ff
 
 ### Phase 4: Project hub, settings route, and sub-nav tabs
 
 #### Automated
 
-- [ ] 4.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
+- [x] 4.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
 
 #### Manual
 
-- [ ] 4.2 Settings on `/settings`; tabs work; Generate link reachable from hub
+- [x] 4.2 Settings on `/settings`; tabs work; Generate link reachable from hub
 
 ### Phase 5: Generate and drafts list polish
 

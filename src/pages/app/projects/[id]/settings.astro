@@ -1,0 +1,47 @@
+---
+import AppLayout from "@/layouts/AppLayout.astro";
+import DeleteProjectForm from "@/components/projects/DeleteProjectForm";
+import ProjectForm from "@/components/projects/ProjectForm";
+import { loadProjectDetailPage } from "@/lib/projects/project-detail-page";
+
+const page = await loadProjectDetailPage(Astro);
+
+if (page.kind === "redirect") {
+  return Astro.redirect(page.to);
+}
+
+const { project, error } = page;
+const apiAction = `/api/projects/${project.id}`;
+---
+
+<AppLayout
+  title={`Project settings — ${project.name}`}
+  projectId={project.id}
+  projectName={project.name}
+  activeTab="settings"
+>
+  <div class="mb-8">
+    <h1 class="heading-gradient text-2xl font-bold">Project settings</h1>
+    <p class="text-cosmic-muted mt-2 text-sm">Update project details or remove this project permanently.</p>
+  </div>
+
+  <ProjectForm
+    action={apiAction}
+    defaultValues={{
+      name: project.name,
+      description: project.description,
+      repo_url: project.repo_url,
+      default_tone: project.default_tone,
+    }}
+    hiddenFields={{ _action: "update" }}
+    errorMessage={error}
+    submitLabel="Save changes"
+    pendingText="Saving..."
+    client:load
+  />
+
+  <div class="mt-10 border-t border-white/10 pt-8">
+    <h2 class="mb-4 text-lg font-semibold text-red-300">Danger zone</h2>
+    <DeleteProjectForm action={apiAction} client:load />
+  </div>
+</AppLayout>

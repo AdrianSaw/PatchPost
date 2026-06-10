@@ -3,9 +3,9 @@ import Layout from "@/layouts/Layout.astro";
 import CosmicShell from "@/components/layout/CosmicShell.astro";
 import BrandTopbar from "@/components/layout/BrandTopbar.astro";
 import GlassCard from "@/components/layout/GlassCard.astro";
+import ProjectSubNav, { type ProjectTab } from "@/components/layout/ProjectSubNav.astro";
 
-/** Reserved for project sub-nav in Phase 4. */
-export type AppActiveTab = "overview" | "generate" | "drafts" | "settings";
+export type AppActiveTab = ProjectTab;
 
 interface Props {
   title?: string;
@@ -14,13 +14,14 @@ interface Props {
   activeTab?: AppActiveTab;
 }
 
-const { title = "PatchPost" } = Astro.props;
+const { title = "PatchPost", projectId, projectName, activeTab } = Astro.props;
 const { user } = Astro.locals;
+const showProjectNav = Boolean(projectId && projectName && activeTab);
 ---
 
 <!--
   App shell: CosmicShell + BrandTopbar + GlassCard wrapper.
-  Page bodies render in the default slot; do not add an outer glass panel on /app pages.
+  Project routes pass projectId, projectName, activeTab for ProjectSubNav.
 -->
 <Layout title={title}>
   <CosmicShell variant="app">
@@ -42,6 +43,7 @@ const { user } = Astro.locals;
       }
     </BrandTopbar>
     <GlassCard>
+      {showProjectNav && <ProjectSubNav projectId={projectId!} projectName={projectName!} activeTab={activeTab!} />}
       <slot />
     </GlassCard>
   </CosmicShell>
