@@ -1,0 +1,14 @@
+---
+interface Props {
+  padding?: "none" | "sm" | "lg";
+  class?: string;
+}
+
+const { padding = "lg", class: className = "" } = Astro.props;
+
+const paddingClass = padding === "none" ? "" : padding === "sm" ? "p-6" : "p-8";
+---
+
+<div class:list={["glass-panel", paddingClass, className]}>
+  <slot />
+</div>

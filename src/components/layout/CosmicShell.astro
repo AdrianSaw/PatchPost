@@ -1,0 +1,45 @@
+---
+interface Props {
+  variant?: "auth-wide" | "app";
+  showOrbs?: boolean;
+  showStarfield?: boolean;
+  class?: string;
+  contentClass?: string;
+}
+
+const {
+  variant = "app",
+  showOrbs = true,
+  showStarfield = true,
+  class: className = "",
+  contentClass = "",
+} = Astro.props;
+
+const widthClass = variant === "auth-wide" ? "max-w-5xl" : "max-w-3xl";
+---
+
+<div class:list={["cosmic bg-cosmic relative min-h-screen w-full overflow-hidden", className]}>
+  {
+    showOrbs && (
+      <>
+        <div
+          class="pointer-events-none absolute top-1/4 -left-24 h-[350px] w-[350px] rounded-full bg-purple-500/20 blur-[120px]"
+          aria-hidden="true"
+        />
+        <div
+          class="pointer-events-none absolute top-2/3 -right-16 h-[250px] w-[250px] rounded-full bg-blue-500/15 blur-[100px]"
+          aria-hidden="true"
+        />
+        <div
+          class="pointer-events-none absolute top-0 left-1/2 h-[300px] w-[300px] -translate-x-1/2 rounded-full bg-indigo-400/10 blur-[140px]"
+          aria-hidden="true"
+        />
+      </>
+    )
+  }
+  {showStarfield && <div class="cosmic-starfield pointer-events-none absolute inset-0" aria-hidden="true" />}
+
+  <div class:list={["relative z-10 mx-auto w-full p-4 sm:p-8", widthClass, contentClass]}>
+    <slot />
+  </div>
+</div>

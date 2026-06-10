@@ -1,0 +1,18 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = "h-8 w-8 text-purple-400" } = Astro.props;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 32 32"
+  fill="currentColor"
+  class:list={className}
+  aria-hidden="true"
+>
+  <path d="M16 2 4 9v14l12 7 12-7V9L16 2Zm0 4.2 8 4.6v9.2l-8 4.6-8-4.6v-9.2l8-4.6Z"></path>
+  <path d="M16 10 10 13.5v7L16 24l6-3.5v-7L16 10Z" opacity="0.85"></path>
+</svg>
