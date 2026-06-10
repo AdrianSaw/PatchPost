@@ -86,7 +86,7 @@ export default function DraftEditForm({ projectId, draftId, initialBody, showRev
   return (
     <form className="space-y-4" onSubmit={handleSubmit} noValidate>
       <div>
-        <Label htmlFor="draft_body" className="mb-1 block text-blue-100/80">
+        <Label htmlFor="draft_body" className="text-cosmic-muted mb-1.5 block text-sm">
           Draft content
         </Label>
         <Textarea
@@ -102,7 +102,7 @@ export default function DraftEditForm({ projectId, draftId, initialBody, showRev
           rows={16}
           disabled={isSubmitting}
           className={cn(
-            "rounded-lg border-white/20 bg-white/10 font-sans text-sm leading-relaxed text-white placeholder:text-white/40 focus-visible:ring-purple-400",
+            "min-h-[12rem] rounded-lg border border-white/10 bg-white/5 font-sans text-sm leading-relaxed text-white placeholder:text-white/40 focus-visible:ring-purple-400 sm:min-h-[16rem]",
             bodyError && "border-red-400/60 focus-visible:ring-red-400",
           )}
         />
@@ -111,13 +111,13 @@ export default function DraftEditForm({ projectId, draftId, initialBody, showRev
 
       <ServerError message={submitError} />
 
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <SubmitButton
           pending={isSubmitting}
           pendingText="Saving..."
           icon={<Save className="size-4" />}
           disabled={!isDirty}
-          className="w-auto"
+          className="btn-cosmic-primary w-full py-2.5 sm:w-auto"
         >
           Save changes
         </SubmitButton>
@@ -126,7 +126,7 @@ export default function DraftEditForm({ projectId, draftId, initialBody, showRev
           variant="outline"
           disabled={isSubmitting}
           onClick={handleCancel}
-          className="rounded-lg border-white/20 bg-white/10 text-white hover:bg-white/20"
+          className="w-full rounded-lg border border-white/15 bg-transparent text-white/80 hover:bg-white/5 sm:w-auto"
         >
           Cancel
         </Button>
@@ -136,7 +136,7 @@ export default function DraftEditForm({ projectId, draftId, initialBody, showRev
             variant="outline"
             disabled={isSubmitting}
             onClick={handleRevert}
-            className="rounded-lg border-white/20 bg-white/10 text-white hover:bg-white/20"
+            className="w-full rounded-lg border border-white/15 bg-transparent text-white/80 hover:bg-white/5 sm:w-auto"
           >
             <RotateCcw className="mr-2 size-4" />
             Revert to original

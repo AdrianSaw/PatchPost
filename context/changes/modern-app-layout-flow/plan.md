@@ -462,18 +462,18 @@ Update `tests/e2e/main-flow.spec.ts` **only** if product intentionally changes l
 
 #### Automated
 
-- [x] 5.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
+- [x] 5.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass — 3fd9bd5
 
 #### Manual
 
-- [x] 5.2 Workflow feels guided; success banner after generate
+- [x] 5.2 Workflow feels guided; success banner after generate — 3fd9bd5
 
 ### Phase 6: Draft edit and landing rebrand
 
 #### Automated
 
-- [ ] 6.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
+- [x] 6.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
 
 #### Manual
 
-- [ ] 6.2 Landing shows PatchPost brand; draft edit polished
+- [x] 6.2 Landing shows PatchPost brand; draft edit polished

@@ -23,15 +23,16 @@ const body = draftBody(draft);
   projectName={project.name}
   activeTab="drafts"
 >
-  <div class="mb-6">
+  <div class="mb-8">
     <h1 class="heading-gradient text-2xl font-bold">
       {draftDisplayTitle(draft)}
     </h1>
-    <p class="mt-1 text-sm text-blue-100/50">
+    <p class="text-cosmic-subtle mt-2 text-sm">
       {formatOutputType(generationRun?.output_type)}
       {generationRun?.tone ? ` · ${formatTone(generationRun.tone)}` : ""}
       · Created {formatProjectDate(draft.created_at)}
     </p>
+    <p class="text-cosmic-muted mt-2 text-sm">Edit the generated copy before you ship it to players.</p>
   </div>
 
   {
@@ -42,7 +43,7 @@ const body = draftBody(draft);
     )
   }
 
-  <div class="rounded-lg border border-white/10 bg-black/20 p-4">
+  <div class="glass-panel-sm p-4 sm:p-6">
     <DraftEditForm
       projectId={project.id}
       draftId={draft.id}
