@@ -1,11 +1,37 @@
 ---
-import Topbar from "@/components/Topbar.astro";
 import CosmicShell from "@/components/layout/CosmicShell.astro";
+import BrandTopbar from "@/components/layout/BrandTopbar.astro";
 import FeatureCard from "@/components/layout/FeatureCard.astro";
+
+const { user } = Astro.locals;
 ---
 
 <CosmicShell variant="auth-wide">
-  <Topbar />
+  <BrandTopbar homeHref="/">
+    {
+      user ? (
+        <div slot="actions" class="flex items-center gap-3">
+          <span class="text-cosmic-muted hidden max-w-[12rem] truncate sm:inline">{user.email}</span>
+          <a href="/app/projects" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
+            Projects
+          </a>
+          <form method="POST" action="/api/auth/signout">
+            <button type="submit" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
+              Sign out
+            </button>
+          </form>
+        </div>
+      ) : (
+        <a
+          slot="actions"
+          href="/auth/signin"
+          class="text-purple-300 transition-colors hover:text-purple-100 hover:underline"
+        >
+          Sign in
+        </a>
+      )
+    }
+  </BrandTopbar>
 
   <div class="mx-auto flex max-w-4xl flex-col items-center justify-center px-4 py-24 text-center sm:py-32 lg:py-40">
     <h1

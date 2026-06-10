@@ -421,22 +421,22 @@ Update `tests/e2e/main-flow.spec.ts` **only** if product intentionally changes l
 
 #### Automated
 
-- [x] 1.1 `npm run lint` and `npm run typecheck` pass
-- [x] 1.2 `npm run test:e2e -- tests/e2e/main-flow.spec.ts` passes
+- [x] 1.1 `npm run lint` and `npm run typecheck` pass — a4c85ae
+- [x] 1.2 `npm run test:e2e -- tests/e2e/main-flow.spec.ts` passes — a4c85ae
 
 #### Manual
 
-- [x] 1.3 Sign-in matches mockup direction on desktop and mobile stack layout
+- [x] 1.3 Sign-in matches mockup direction on desktop and mobile stack layout — a4c85ae
 
 ### Phase 2: App shell and BrandTopbar
 
 #### Automated
 
-- [ ] 2.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
+- [x] 2.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
 
 #### Manual
 
-- [ ] 2.2 Logo Topbar and app shell consistent across `/app/*`
+- [x] 2.2 Logo Topbar and app shell consistent across `/app/*`
 
 ### Phase 3: Projects list and new project
 
