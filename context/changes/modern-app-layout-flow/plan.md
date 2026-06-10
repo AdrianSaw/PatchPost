@@ -432,21 +432,21 @@ Update `tests/e2e/main-flow.spec.ts` **only** if product intentionally changes l
 
 #### Automated
 
-- [x] 2.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
+- [x] 2.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass — a2517c1
 
 #### Manual
 
-- [x] 2.2 Logo Topbar and app shell consistent across `/app/*`
+- [x] 2.2 Logo Topbar and app shell consistent across `/app/*` — a2517c1
 
 ### Phase 3: Projects list and new project
 
 #### Automated
 
-- [ ] 3.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
+- [x] 3.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
 
 #### Manual
 
-- [ ] 3.2 Projects empty/populated states and new project form clear
+- [x] 3.2 Projects empty/populated states and new project form clear
 
 ### Phase 4: Project hub, settings route, and sub-nav tabs
 
