@@ -24,7 +24,7 @@ const showProjectNav = Boolean(projectId && projectName && activeTab);
   Project routes pass projectId, projectName, activeTab for ProjectSubNav.
 -->
 <Layout title={title}>
-  <CosmicShell variant="app">
+  <CosmicShell variant="app" showOrbs={false} showStarfield={false}>
     <BrandTopbar homeHref="/app/projects">
       {
         user ? (

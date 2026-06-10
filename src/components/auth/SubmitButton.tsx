@@ -26,6 +26,7 @@ export function SubmitButton({
   return (
     <Button
       type="submit"
+      variant="ghost"
       disabled={pending || disabled}
       className={cn("btn-cosmic-primary w-full px-4 py-2.5 font-semibold disabled:opacity-60", className)}
     >

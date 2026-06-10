@@ -77,7 +77,7 @@ Centralize cosmic/glass/purple styling and create reusable layout building block
 
 **Intent**: Single source for background orbs/star field (from Welcome), glass card wrapper, top bar with PatchPost logo/wordmark, feature marketing card.
 
-**Contract**: `CosmicShell` props: `variant?: 'auth-wide' | 'app'`, optional `showOrbs`, `showStarfield`. `GlassCard` wraps slot with standard padding/radius. `BrandTopbar` shows logo + optional right slot (email/nav). `FeatureCard` props: `icon`, `title`, `description`. Use `cn()` where class merging needed in TSX consumers only.
+**Contract**: `CosmicShell` props: `variant?: 'auth-wide' | 'app'`, optional `showOrbs`, `showStarfield`. `GlassCard` wraps slot with standard padding/radius. `BrandTopbar` shows logo + optional right slot (email/nav). `FeatureCard` props: `title`, `description`; icon via `<slot name="icon">`. Use `cn()` where class merging needed in TSX consumers only.
 
 #### 3. Document usage
 

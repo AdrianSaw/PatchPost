@@ -10,6 +10,7 @@ export {
   deleteGeneratedOutput,
   getGeneratedOutputById,
   listGeneratedOutputsByProject,
+  getLatestProjectDraft,
   listProjectDraftHistory,
   updateGeneratedOutput,
   type ProjectDraftHistoryItem,

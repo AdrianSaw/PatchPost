@@ -3,7 +3,7 @@ import AppLayout from "@/layouts/AppLayout.astro";
 import { createClient } from "@/lib/supabase";
 import { draftDisplayTitle, draftSnippet } from "@/lib/projects/draft-text";
 import { formatProjectDate, loadProjectDetailPage } from "@/lib/projects/project-detail-page";
-import { listProjectDraftHistory } from "@/lib/services/generated-outputs";
+import { getLatestProjectDraft } from "@/lib/services/generated-outputs";
 
 const page = await loadProjectDetailPage(Astro);
 
@@ -15,9 +15,14 @@ const { project } = page;
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 let recentDraft = null;
+let recentDraftError: string | null = null;
 if (supabase) {
-  const { data } = await listProjectDraftHistory(supabase, project.id);
-  recentDraft = data?.[0] ?? null;
+  const { data, error } = await getLatestProjectDraft(supabase, project.id);
+  if (error) {
+    recentDraftError = "Unable to load latest draft.";
+  } else {
+    recentDraft = data;
+  }
 }
 ---
 
@@ -51,6 +56,8 @@ if (supabase) {
       </a>
     </div>
   </div>
+
+  {recentDraftError && <p class="text-cosmic-subtle mb-4 text-sm">{recentDraftError}</p>}
 
   {
     recentDraft && (
