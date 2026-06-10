@@ -1,19 +1,50 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import Topbar from "@/components/Topbar.astro";
+import CosmicShell from "@/components/layout/CosmicShell.astro";
+import BrandTopbar from "@/components/layout/BrandTopbar.astro";
+import GlassCard from "@/components/layout/GlassCard.astro";
+import ProjectSubNav, { type ProjectTab } from "@/components/layout/ProjectSubNav.astro";
+
+export type AppActiveTab = ProjectTab;
 
 interface Props {
   title?: string;
+  projectId?: string;
+  projectName?: string;
+  activeTab?: AppActiveTab;
 }
 
-const { title = "PatchPost" } = Astro.props;
+const { title = "PatchPost", projectId, projectName, activeTab } = Astro.props;
+const { user } = Astro.locals;
+const showProjectNav = Boolean(projectId && projectName && activeTab);
 ---
 
+<!--
+  App shell: CosmicShell + BrandTopbar + GlassCard wrapper.
+  Project routes pass projectId, projectName, activeTab for ProjectSubNav.
+-->
 <Layout title={title}>
-  <div class="bg-cosmic min-h-screen p-4">
-    <div class="mx-auto max-w-3xl">
-      <Topbar />
+  <CosmicShell variant="app" showOrbs={false} showStarfield={false}>
+    <BrandTopbar homeHref="/app/projects">
+      {
+        user ? (
+          <div slot="actions" class="flex items-center gap-3">
+            <span class="text-cosmic-muted hidden max-w-[12rem] truncate sm:inline">{user.email}</span>
+            <a href="/app/projects" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
+              Projects
+            </a>
+            <form method="POST" action="/api/auth/signout">
+              <button type="submit" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
+                Sign out
+              </button>
+            </form>
+          </div>
+        ) : null
+      }
+    </BrandTopbar>
+    <GlassCard>
+      {showProjectNav && <ProjectSubNav projectId={projectId!} projectName={projectName!} activeTab={activeTab!} />}
       <slot />
-    </div>
-  </div>
+    </GlassCard>
+  </CosmicShell>
 </Layout>

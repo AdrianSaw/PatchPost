@@ -1,0 +1,40 @@
+---
+export type ProjectTab = "overview" | "generate" | "drafts" | "settings";
+
+interface Props {
+  projectId: string;
+  projectName: string;
+  activeTab: ProjectTab;
+}
+
+const { projectId, projectName, activeTab } = Astro.props;
+
+const base = `/app/projects/${projectId}`;
+const tabs: { id: ProjectTab; label: string; href: string }[] = [
+  { id: "overview", label: "Overview", href: base },
+  { id: "generate", label: "Generate", href: `${base}/generate` },
+  { id: "drafts", label: "Drafts", href: `${base}/drafts` },
+  { id: "settings", label: "Settings", href: `${base}/settings` },
+];
+---
+
+<nav aria-label={`${projectName} sections`} class="mb-6 border-b border-white/10">
+  <div class="-mb-px flex flex-wrap gap-1">
+    {
+      tabs.map((tab) => (
+        <a
+          href={tab.href}
+          class:list={[
+            "rounded-t-lg px-4 py-2 text-sm font-medium transition-colors",
+            activeTab === tab.id
+              ? "border-b-2 border-purple-400 bg-white/5 text-white"
+              : "text-cosmic-muted hover:text-purple-200",
+          ]}
+          aria-current={activeTab === tab.id ? "page" : undefined}
+        >
+          {tab.label}
+        </a>
+      ))
+    }
+  </div>
+</nav>

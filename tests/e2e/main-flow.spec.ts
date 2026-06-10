@@ -23,7 +23,7 @@ test.describe("Risk #5 — generate persists draft to history (US-01 wiring)", (
     // Create project (native form POST → project detail)
     await test.step("Create project", async () => {
       await page.goto("/app/projects/new");
-      await page.getByRole("textbox", { name: "Project name" }).fill(projectName);
+      await fillReactField(page.getByRole("textbox", { name: "Project name" }), projectName);
       await page.getByRole("button", { name: "Create project" }).click();
       await page.waitForURL(/\/app\/projects\/[0-9a-f-]{36}$/);
     });
@@ -31,7 +31,7 @@ test.describe("Risk #5 — generate persists draft to history (US-01 wiring)", (
     // Open generate form (React island must hydrate before fetch-based submit)
     await test.step("Open generate form (wait for island hydration)", async () => {
       const generateFormLoaded = waitForGenerateFormReady(page);
-      await page.getByRole("link", { name: "Generate" }).click();
+      await page.getByRole("link", { name: "Generate", exact: true }).click();
       await generateFormLoaded;
       await expect(page.getByRole("heading", { name: "Generate content" })).toBeVisible();
       await expect(page.getByLabel("Use mock AI provider (dev only)")).toBeChecked();

@@ -87,7 +87,7 @@ export default function GenerateForm({
   }
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+    <form className="space-y-5" onSubmit={handleSubmit} noValidate>
       <FormField
         id="title"
         label="Title (optional)"
@@ -98,10 +98,10 @@ export default function GenerateForm({
       />
 
       <div>
-        <Label htmlFor="raw_content" className="mb-1 block text-blue-100/80">
+        <Label htmlFor="raw_content" className="text-cosmic-muted mb-1.5 block text-sm">
           Changes
         </Label>
-        <p className="mb-2 text-xs text-blue-100/50">Paste commit messages or bullet points, one per line.</p>
+        <p className="text-cosmic-subtle mb-2 text-xs">Paste commit messages or bullet points, one per line.</p>
         <Textarea
           id="raw_content"
           name="raw_content"
@@ -116,7 +116,7 @@ export default function GenerateForm({
           rows={8}
           disabled={isSubmitting}
           className={cn(
-            "rounded-lg border-white/20 bg-white/10 text-white placeholder:text-white/40 focus-visible:ring-purple-400",
+            "rounded-lg border border-white/10 bg-white/5 text-white placeholder:text-white/40 focus-visible:ring-purple-400",
             rawContentError && "border-red-400/60 focus-visible:ring-red-400",
           )}
         />
@@ -124,7 +124,7 @@ export default function GenerateForm({
       </div>
 
       <div>
-        <Label htmlFor="output_type" className="mb-1 block text-blue-100/80">
+        <Label htmlFor="output_type" className="text-cosmic-muted mb-1.5 block text-sm">
           Output channel
         </Label>
         <Select
@@ -135,7 +135,7 @@ export default function GenerateForm({
           onChange={(event) => {
             setOutputType(event.target.value as OutputType);
           }}
-          className="rounded-lg border-white/20 bg-white/10 text-white focus-visible:ring-purple-400"
+          className="rounded-lg border border-white/10 bg-white/5 text-white focus-visible:ring-purple-400"
         >
           {OUTPUT_TYPE_OPTIONS.map((option) => (
             <option key={option.value} value={option.value} className="bg-slate-900 text-white">
@@ -146,7 +146,7 @@ export default function GenerateForm({
       </div>
 
       <div>
-        <Label htmlFor="tone" className="mb-1 block text-blue-100/80">
+        <Label htmlFor="tone" className="text-cosmic-muted mb-1.5 block text-sm">
           Tone (optional)
         </Label>
         <Select
@@ -157,7 +157,7 @@ export default function GenerateForm({
           onChange={(event) => {
             setTone(event.target.value);
           }}
-          className="rounded-lg border-white/20 bg-white/10 text-white focus-visible:ring-purple-400"
+          className="rounded-lg border border-white/10 bg-white/5 text-white focus-visible:ring-purple-400"
         >
           <option value="">Project default</option>
           {TONE_OPTIONS.map((option) => (
@@ -169,7 +169,7 @@ export default function GenerateForm({
       </div>
 
       {showDevMockToggle ? (
-        <label className="flex items-center gap-2 text-sm text-blue-100/70">
+        <label className="glass-panel-sm flex cursor-pointer items-center gap-3 px-4 py-3 text-sm text-white/90">
           <input
             type="checkbox"
             checked={useDevMockProvider}
@@ -177,15 +177,23 @@ export default function GenerateForm({
               setUseDevMockProvider(event.target.checked);
             }}
             disabled={isSubmitting}
-            className="rounded border-white/30 bg-white/10"
+            className="size-4 rounded border-white/30 bg-white/10 accent-purple-500"
           />
-          Use mock AI provider (dev only)
+          <span>
+            <span className="font-medium">Use mock AI provider (dev only)</span>
+            <span className="text-cosmic-muted mt-0.5 block text-xs">Faster runs without calling a live model.</span>
+          </span>
         </label>
       ) : null}
 
       <ServerError message={submitError} />
 
-      <SubmitButton pending={isSubmitting} pendingText="Generating..." icon={<Sparkles className="size-4" />}>
+      <SubmitButton
+        pending={isSubmitting}
+        pendingText="Generating..."
+        icon={<Sparkles className="size-4" />}
+        className="py-3 text-base"
+      >
         Generate draft
       </SubmitButton>
     </form>

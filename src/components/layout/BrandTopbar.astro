@@ -1,0 +1,26 @@
+---
+import BrandLogo from "@/components/layout/BrandLogo.astro";
+
+interface Props {
+  homeHref?: string;
+  class?: string;
+}
+
+const { homeHref = "/", class: className = "" } = Astro.props;
+---
+
+<header
+  class:list={["glass-panel-sm mb-4 flex items-center justify-between px-4 py-2.5 text-sm text-white/80", className]}
+>
+  <a
+    href={homeHref}
+    class="flex items-center gap-2.5 rounded-md focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:outline-none"
+    aria-label="PatchPost"
+  >
+    <BrandLogo class="h-7 w-7 text-purple-400" />
+    <span class="text-base font-semibold tracking-tight text-white">PatchPost</span>
+  </a>
+  <div class="flex items-center gap-3">
+    <slot name="actions" />
+  </div>
+</header>

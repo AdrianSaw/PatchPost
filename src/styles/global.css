@@ -114,6 +114,61 @@
   background-image: linear-gradient(to bottom, #0a0e1a, #0f1529, #0a0e1a);
 }
 
+/* PatchPost cosmic UI tokens (scoped via .cosmic on CosmicShell) */
+:root {
+  --cosmic-brand: oklch(0.585 0.233 293.4);
+  --cosmic-brand-hover: oklch(0.627 0.233 293.4);
+  --cosmic-fg: oklch(0.985 0 0);
+  --cosmic-link: oklch(0.827 0.119 306.383);
+}
+
+.cosmic {
+  --primary: var(--cosmic-brand);
+  --primary-foreground: var(--cosmic-fg);
+  color-scheme: dark;
+}
+
+@utility text-cosmic-muted {
+  color: oklch(0.85 0.04 260 / 0.6);
+}
+
+@utility text-cosmic-subtle {
+  color: oklch(0.85 0.04 260 / 0.7);
+}
+
+@utility heading-gradient {
+  @apply bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-transparent;
+}
+
+@utility glass-panel {
+  @apply rounded-2xl border border-white/10 bg-white/10 text-white backdrop-blur-xl;
+}
+
+@utility glass-panel-sm {
+  @apply rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl;
+}
+
+@utility btn-cosmic-primary {
+  @apply inline-flex items-center justify-center rounded-lg bg-purple-600 font-medium text-white transition-colors hover:bg-purple-500;
+}
+
+@layer components {
+  .cosmic-starfield {
+    background-image:
+      radial-gradient(circle, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+      radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size:
+      200px 200px,
+      150px 150px,
+      100px 100px;
+    background-position:
+      0 0,
+      40px 60px,
+      80px 30px;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

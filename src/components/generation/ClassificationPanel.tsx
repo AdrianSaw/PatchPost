@@ -22,13 +22,13 @@ export default function ClassificationPanel({ items, outputLanguage }: Classific
   }
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5">
+    <div className="glass-panel-sm">
       <button
         type="button"
         onClick={() => {
           setOpen((value) => !value);
         }}
-        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-medium text-blue-100/90"
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-medium text-white/90"
         aria-expanded={open}
       >
         <span>
@@ -41,13 +41,13 @@ export default function ClassificationPanel({ items, outputLanguage }: Classific
       {open ? (
         <ul className="space-y-3 border-t border-white/10 px-4 py-3">
           {items.map((item, index) => (
-            <li key={`${item.source}-${String(index)}`} className="rounded-lg border border-white/10 bg-white/5 p-3">
+            <li key={`${item.source}-${String(index)}`} className="glass-panel-sm p-3">
               <p className="text-sm font-medium text-white">{item.source}</p>
-              <p className="mt-1 text-xs text-blue-100/60">
+              <p className="text-cosmic-subtle mt-1 text-xs">
                 {item.classification.replaceAll("_", " ")} · {VISIBILITY_LABELS[item.visibility]}
               </p>
-              <p className="mt-2 text-sm text-blue-100/80">{item.suggested_public_summary}</p>
-              <p className="mt-2 text-xs text-blue-100/50">{item.reason}</p>
+              <p className="text-cosmic-muted mt-2 text-sm">{item.suggested_public_summary}</p>
+              <p className="text-cosmic-subtle mt-2 text-xs">{item.reason}</p>
             </li>
           ))}
         </ul>

@@ -56,6 +56,37 @@ export async function listGeneratedOutputsByProject(supabase: SupabaseClient, pr
     .order("created_at", { ascending: false });
 }
 
+export async function getLatestProjectDraft(
+  supabase: SupabaseClient,
+  projectId: string,
+): Promise<{ data: ProjectDraftHistoryItem | null; error: PostgrestError | null }> {
+  const { data, error } = await supabase
+    .from("generated_outputs")
+    .select(`${DRAFT_HISTORY_LIST_COLUMNS}, generation_runs ( output_type, tone )`)
+    .eq("project_id", projectId)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    return { data: null, error };
+  }
+  if (!data) {
+    return { data: null, error: null };
+  }
+
+  const row = data as unknown as DraftHistoryQueryRow;
+  const { generation_runs: run, ...draft } = row;
+  return {
+    data: {
+      draft,
+      output_type: run?.output_type ?? null,
+      tone: run?.tone ?? null,
+    },
+    error: null,
+  };
+}
+
 export async function listProjectDraftHistory(
   supabase: SupabaseClient,
   projectId: string,
