@@ -452,21 +452,21 @@ Update `tests/e2e/main-flow.spec.ts` **only** if product intentionally changes l
 
 #### Automated
 
-- [x] 4.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
+- [x] 4.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass — 9bd6c49
 
 #### Manual
 
-- [x] 4.2 Settings on `/settings`; tabs work; Generate link reachable from hub
+- [x] 4.2 Settings on `/settings`; tabs work; Generate link reachable from hub — 9bd6c49
 
 ### Phase 5: Generate and drafts list polish
 
 #### Automated
 
-- [ ] 5.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
+- [x] 5.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
 
 #### Manual
 
-- [ ] 5.2 Workflow feels guided; success banner after generate
+- [x] 5.2 Workflow feels guided; success banner after generate
 
 ### Phase 6: Draft edit and landing rebrand
 
