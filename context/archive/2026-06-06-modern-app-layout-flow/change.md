@@ -1,10 +1,10 @@
 ---
 change_id: modern-app-layout-flow
 title: Modern app layout and view-by-view flow redesign
-status: impl_reviewed
+status: archived
 created: 2026-06-06
 updated: 2026-06-10
-archived_at: null
+archived_at: 2026-06-10T20:27:44Z
 ---
 
 ## Notes
