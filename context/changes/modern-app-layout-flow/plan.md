@@ -410,23 +410,23 @@ Update `tests/e2e/main-flow.spec.ts` **only** if product intentionally changes l
 
 #### Automated
 
-- [x] 0.1 `npm run typecheck` passes
-- [x] 0.2 `npm run lint` passes
+- [x] 0.1 `npm run typecheck` passes — 349335a
+- [x] 0.2 `npm run lint` passes — 349335a
 
 #### Manual
 
-- [x] 0.3 Layout primitives render correctly (CosmicShell, GlassCard, BrandTopbar, FeatureCard)
+- [x] 0.3 Layout primitives render correctly (CosmicShell, GlassCard, BrandTopbar, FeatureCard) — 349335a
 
 ### Phase 1: Sign-in mockup parity
 
 #### Automated
 
-- [ ] 1.1 `npm run lint` and `npm run typecheck` pass
-- [ ] 1.2 `npm run test:e2e -- tests/e2e/main-flow.spec.ts` passes
+- [x] 1.1 `npm run lint` and `npm run typecheck` pass
+- [x] 1.2 `npm run test:e2e -- tests/e2e/main-flow.spec.ts` passes
 
 #### Manual
 
-- [ ] 1.3 Sign-in matches mockup direction on desktop and mobile stack layout
+- [x] 1.3 Sign-in matches mockup direction on desktop and mobile stack layout
 
 ### Phase 2: App shell and BrandTopbar
 

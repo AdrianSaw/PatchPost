@@ -1,20 +1,78 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import SignInForm from "@/components/auth/SignInForm";
+import CosmicShell from "@/components/layout/CosmicShell.astro";
+import BrandTopbar from "@/components/layout/BrandTopbar.astro";
+import GlassCard from "@/components/layout/GlassCard.astro";
+import FeatureCard from "@/components/layout/FeatureCard.astro";
 
 const error = Astro.url.searchParams.get("error");
 ---
 
-<Layout title="Sign in">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-sm rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-      <h1
-        class="mb-6 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-center text-2xl font-bold text-transparent"
+<Layout title="Sign in — PatchPost">
+  <CosmicShell variant="auth-wide">
+    <BrandTopbar homeHref="/" />
+
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3 md:items-start">
+      <FeatureCard
+        class="order-2 md:order-1"
+        title="Projects & Drafts"
+        description="Organize game updates by project and keep every changelog draft in one place."
       >
-        Sign in
-      </h1>
-      <SignInForm serverError={error} client:load />
-      <p class="mt-4 text-center text-sm text-blue-100/60">Access is by invitation.</p>
+        <svg
+          slot="icon"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"
+          ></path>
+          <path d="M8 10v4"></path>
+          <path d="M12 10v2"></path>
+          <path d="M16 10v6"></path>
+        </svg>
+      </FeatureCard>
+
+      <GlassCard class="order-1 md:order-2" padding="lg">
+        <h1 class="heading-gradient mb-2 text-center text-2xl font-bold">Welcome back</h1>
+        <p class="text-cosmic-muted mb-6 text-center text-sm">Sign in to your PatchPost workspace</p>
+        <SignInForm serverError={error} client:load />
+        <p class="text-cosmic-subtle mt-4 text-center text-sm">Access is by invitation.</p>
+      </GlassCard>
+
+      <FeatureCard
+        class="order-3"
+        title="AI Draft Generation"
+        description="Turn raw patch notes into player-friendly changelogs and social-ready copy."
+      >
+        <svg
+          slot="icon"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"
+          ></path>
+          <path d="M20 3v4"></path>
+          <path d="M22 5h-4"></path>
+          <path d="M4 17v2"></path>
+          <path d="M5 18H3"></path>
+        </svg>
+      </FeatureCard>
     </div>
-  </div>
+  </CosmicShell>
 </Layout>

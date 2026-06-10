@@ -27,10 +27,7 @@ export function SubmitButton({
     <Button
       type="submit"
       disabled={pending || disabled}
-      className={cn(
-        "w-full rounded-lg bg-purple-600 px-4 py-2 font-medium text-white transition-colors hover:bg-purple-500",
-        className,
-      )}
+      className={cn("btn-cosmic-primary w-full px-4 py-2.5 font-semibold disabled:opacity-60", className)}
     >
       {pending ? (
         <span className="flex items-center gap-2">
