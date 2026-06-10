@@ -1,7 +1,7 @@
 ---
 change_id: modern-app-layout-flow
 title: Modern app layout and view-by-view flow redesign
-status: implementing
+status: implemented
 created: 2026-06-06
 updated: 2026-06-10
 archived_at: null

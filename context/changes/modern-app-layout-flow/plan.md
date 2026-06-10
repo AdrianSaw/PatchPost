@@ -472,8 +472,8 @@ Update `tests/e2e/main-flow.spec.ts` **only** if product intentionally changes l
 
 #### Automated
 
-- [x] 6.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass
+- [x] 6.1 `npm run lint`, `npm run typecheck`, `npm run test:e2e` pass — c437e0e
 
 #### Manual
 
-- [x] 6.2 Landing shows PatchPost brand; draft edit polished
+- [x] 6.2 Landing shows PatchPost brand; draft edit polished — c437e0e
